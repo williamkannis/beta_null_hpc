@@ -15,4 +15,4 @@ module load proj/9.2.1
 module load sqlite/3.43.2
 
 # Run the task for each index in the job array
-Rscript 10_null_phy_alpha.R HPC_data/alpha_null_input/phy/his_phy_alpha_null_input_list.rds
+Rscript 10_null_phy_alpha.R HPC_data/alpha_null_input/his_phy_alpha_null_input_list.rds

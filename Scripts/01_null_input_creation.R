@@ -26,12 +26,10 @@ library(ape)
 data_dir <- "Diversity Input Data"
 
 # Export directories
-tax_dir <- "HPC_data/beta_null_input_data/tax"
-fun_dir <- "HPC_data/beta_null_input_data/fun"
-phy_dir <- "HPC_data/beta_null_input_data/phy"
+beta_dir <- "HPC_data/beta_null_input_data"
 obs_dir <- "HPC_data/beta_obs_input_data"
-phya_dir <- "HPC_data/alpha_null_input/phy"
-funa_dir <- "HPC_data/alpha_null_input/fun"
+alpha_dir <- "HPC_data/alpha_null_input"
+
 
 # load in custom null model algorithms
 algo_dir <-"Scripts"
@@ -357,13 +355,13 @@ saveRDS(his_phy_obs,file.path(obs_dir,"his_phy_obs_input_list.rds"))
 # Null alpha input lists
 saveRDS(
   phy_alpha_input,
-  file.path(phya_dir,"his_phy_alpha_null_input_list.rds")
+  file.path(alpha_dir,"his_phy_alpha_null_input_list.rds")
   )
 purrr::map2(
   fun_alpha_input,names(fun_alpha_input), 
   function(x,y) saveRDS(
     x,
-    file.path(funa_dir,paste0("his_fun_alpha_null_input_list_",y,".rds"))
+    file.path(alpha_dir,paste0("his_fun_alpha_null_input_list_",y,".rds"))
     )
   )
 
@@ -375,7 +373,7 @@ purrr::map2(
   fun_input,names(fun_input), 
   function(x,y) saveRDS(
     x,
-    file.path(fun_dir,paste0("fun_null_input_list_",y,".rds"))
+    file.path(beta_dir,paste0("fun_null_input_list_",y,".rds"))
     )
   )
 purrr::map2(
@@ -383,7 +381,7 @@ purrr::map2(
   names(phy_input), 
   function(x,y) saveRDS(
     x,
-    file.path(phy_dir,paste0("phy_null_input_list_",y,".rds"))
+    file.path(beta_dir,paste0("phy_null_input_list_",y,".rds"))
     )
   )
 

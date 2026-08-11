@@ -33,8 +33,7 @@ source("diversity_batch_functions.R")
 
 # Input data
 cores <- 20
-args <- commandArgs(trailingOnly = TRUE)
-input_file <- paste0(args,"_tax_null_input_list.rds")
+input_file <-"tax_null_input_list.rds"
 com_list <- readRDS(file.path(input_dir,input_file))
 
 
@@ -53,7 +52,4 @@ if(export_results) {
 } else {
   print("some scheduled cores did not return values. all jobs affected")
 }
-
-
-# End of script
 
