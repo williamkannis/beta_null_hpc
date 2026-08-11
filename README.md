@@ -1,5 +1,21 @@
-# Source code for *Drivers of multifaceted beta diversity change in invaded stream fish communities*
-## Contact information and citation
+# Beta diversity change null modelling workflow for High Perfomance Computor Clusters
+
+Code and a general workflow for calculating null model standardized alpha 
+diversity, beta diversity, and local contribution to beta diversity (LCBD). 
+Standardized effect sizes (SES) were calculated for two species pools 
+(contemporary and native only), as well as for the change in diversity between 
+species pools.This workflow is designed to run using R on local machines with 
+the more expensive calculations ran using high performance computing clusters 
+via the slurm interface and shell scripts.
+
+For detailed methodology and justification see:
+
+>[BLANK]()
+
+>[BLANK]()
+
+
+For questions about this analysis, please contact:
 
 ```bash
 Name: William K. Annis
@@ -8,26 +24,22 @@ Email: wannis@fsu.edu, williamkannis@gmail.com
 
 OrcID: 0009-0003-3541-8503
 ```
-Cite as:
-> CITE
+If you use this code or workflow, please cite:
+
+[Manuscript citation]
+
+[Manuscript citation]
+
+[Workflow citation / DOI]
 
 
-## Analysis work flow
-Here, we provide code and a general workflow for calculating null model 
-standardized alpha diversity, beta diversity, and local contribution to beta 
-diversity (LCBD) values. Standardized effect sizes (SES) were calculated for two 
-species pools (contemporary and native only), as well as for the change in 
-diversity between species pools. See the manuscript for more detailed 
-methodology and justification. This workflow is designed to run using R on 
-local machines with the more expensive calculations ran using high performance 
-computing clusters via the slurm interface and shell scripts. R and shell 
-scripts are numbered in order of workflow. 
-
+## Installation
 
 ### Required Software
 **R version**: 4.5.0
 
-R packages for null model workflow
+R packages
+
 * ```'ade4'``` version: 1.7.23
 * ```'adespatial'``` version: 0.3.28
 * ```'ape'``` version: 5.8.1
@@ -56,7 +68,7 @@ resulting diversity outputs.
 │   ├── trait_diversity_input.rds
 │   └── phylo_tree.rds
 │
-├── HPC_data
+├── HPC
 │   ├── beta_null_input_data
 │   │   ├── fun
 │   │   ├── phy
@@ -67,7 +79,8 @@ resulting diversity outputs.
 │   │── null_out
 │   │── obs_out
 │   │── ses_inputs
-│   └── ses_outputs
+│   │── ses_outputs
+│   └── scripts_hpc
 │
 └── Diversity Output Data
 
@@ -79,42 +92,74 @@ Place community data for both species pools (contemporary - "mod" and native -
 following names: 
 
 * ```mod_com_diversity_input.rds```: Community data for contemporary species 
-pool. Dataframe or matrix with rows for sites and columns for species. Can 
+pool. Data.frame or matrix with rows for sites and columns for species. Can 
 contain an optional column ```HUC_12``` which represent regions and can be used 
 to define regional species pools.
 * ```his_com_diversity_input.rds```: Community data for native-only species pool. 
 Same structure as ```mod_com_diversity_input.rds```
 * ```trait_diversity_input.rds```: Trait data for all species in community data. 
-Dataframe or matrix with rows for species and columns for traits.
+Data.frame or matrix with rows for species and columns for traits.
 * ```phylo_tree.rds```: Phylogenetic tree for all species in community data
 
 ## Workflow
+Scripts can be found in the ```Scripts``` directory and are number based on
+order of workflow.
+
+Completing the full workflow will results in observed values and null model 
+standardized effect sizes for taxonomic, functional, and phylogenetic beta 
+diversity/LCBD at two time steps, and change between those time steps. 
+Additionally, functional and phylogenetic alpha diversity at the first time step
+will be calculated in observed and effect size. Users can choose what metrics
+that want to calculate by running only the scripts that correspond to the metrics
+of interest. See table below for script naming codes:
+
+```bash
+tax = taxonomic
+fun = functional
+phy = phylogenetic
+```
+Additionally, users can modify script to incorporate more or less time periods,
+of other diversity metrics of interest.
 
 ### 1. Prepare input data - perform on local machine
 **Script:** ```01_null_input_creation.R```
 
-To best take advantage of high performance computation, we need to format our 
-data in a manner that allows for parallel processing of diversity metrics. As 
-we need to estimate 999 null iterations of each diversity metric and species 
-pool (native only and contemporary), we want to prepare input data that can 
-run iterations simultaneously. For beta diversity null models, we need to 
-generate 999 shuffled trait matrices and phylogenetic trees. For native 
-alpha diversity, we need to generate 999 random community matrices. A benefit 
-to HPC is that processes can be ran on a high number of cores among multiple 
-computer nodes. To take advantage of HPC, we need to divide the list of null 
-traits, trees, and/or communities into chunks based on CPU and memory limits per 
-each node. These chunks can be ran on separate computer nodes. This reduces 
-memory requirements within nodes and allows for better queue times. 
 
-The following script imports ```mod_com_diversity_input.rds```, ```his_com_diversity_input.rds```
-, ```trait_diversity_input.rds```, and ```phylo_tree.rds```. These data are then 
-used to create reduced functional space using PCoA and trims trees to fit 
-community data. Both observed and null input data lists for alpha and beta 
-diversity are then created and divided into chunks to run on separate HPC nodes.
+<ins>Purpose:</ins> Prepares input data for the calculation of observed and null
+diversity values on high performance computer clusters. By default, 999 iteration
+of random community matrices (regionally constrained and taxonomic beta null 
+models), random functional-spaces/phylogenetic-trees (taxa-swap null models).
+Users can change the number of null iterations created by modifying the 
+following code: ```max_iter  <- 999```.
 
-<ins>Purpose:</ins>
+Input data are prepared in chunks of random iterations to run on multiple PC nodes
+simultaneously, with each chunk being ran on one node. Each node will be able
+to run multiple null model iterations simultaneously across a user specified
+amount of cores. By separating iterations across nodes, users can use more 
+computer cores simultaneously, reduce memory pressure, reduce HPC queue times,
+and more efficiency use HPC resources.
 
-NEED TEXT ABOUT NUMBER OF CHUNKS AND MEMORY ALLOCATION
+We offer recommended chunk sizes in the script based on diversity calculations
+used in the studies [here](BLANK) and [here]().
+For example, the 1998 iterations (999 iterations each pool) of functional beta 
+diversity we divided into 999 chunks with 2 iteration per node due to the high
+memory requirements of kernel density based functional metrics. COnversely,
+the 1998 iteration of phylogenetic beta diversity were divided into 6 chunks
+with 333 iterations per chunk
+
+Users should determine chunk sizes based their own computational needs, and
+can choose the number of chunks (i.e., nodes) per species pool by altering the 
+following code:
+
+```bash
+# How many cores per nodes to get 999 total
+sapply(c(1, 3, 9, 27, 37, 111),function(x) 999/x)
+
+# Create splits based on number of nodes needed
+n_groups_t <-      # taxonomic
+n_groups_f <- 500  # functions
+n_groups_p <- 3    # phylogenetic
+```
 
 <ins>NOTE:</ins> This script only contains code to shuffle communities using 
 taxa-swap and a regionally-constrained taxa-swap null model algorithms, which 
@@ -124,13 +169,35 @@ diversity, they may not be suited for all null model purposes. Users should
 research the best model for their usage and modify ```01_null_input_creation.R``` 
 and ```null_model_algorithms.R``` accordingly.
 
-<ins>Outputs:</ins>
+<ins>Outputs:</ins> Lists of input data for each metric and processing chunk.
+For all metrics but taxonomic, list contains community and 
+functional/phylogenetic data. Depending on null model, either the community or
+functional/phylogenetic data are a list of 999 random iterations.
 
-### 2. Upload entire ```HPC_data``` directory to high performance cluster storage.
+
+### 2. Upload entire ```HPC``` directory to high performance cluster storage.
 For all steps utilizing HPC clusters, users will run shell scripts that will
-run the respective R script using specified HPC resources.
+run the respective R script using specified HPC resources.We provide shell 
+scripts with recommended Slurm arguments, but these may need to be altered based 
+on the computational requirements of the user's data.
 
-ADD TABLE WITH COMMON USED ARGUMENTS
+See below for an example of commonly used Slurm arguments:
+
+```bash
+# Process using 6 HPC nodes
+#SBATCH --array=1-6  
+
+# Use 37 cpu cores per node
+#SBATCH --cpus-per-task=37
+
+# Use 45gb of ram per node
+#SBATCH --mem=45gb
+
+# 6 hours of walltime
+#SBATCH --time=6:00:00
+```
+
+
 
 ### 3 .Calculate observed diversity values - perform using HPC
 **Scripts:**
@@ -145,7 +212,7 @@ ADD TABLE WITH COMMON USED ARGUMENTS
 and native only species pools, and the observed alpha diversity of the native 
 only species pool. Uses one high performance computer nodes for each time step. 
 
-<ins>Outputs:</ins> 
+<ins>Outputs:</ins> Intermediate files used for effect size calculations
 
 * [Observed beta diversity data](#observed-beta-diversity-data)
 * [Observed alpha diversity data](#observed-alpha-diversity-data)
@@ -154,37 +221,25 @@ only species pool. Uses one high performance computer nodes for each time step.
 **Scripts:**
 
 *	```07_null_tax_beta.sh``` - ```07_null_tax_beta.R```
-*	```07_null_fun_beta.sh``` - ```07_null_fun_beta.R```
-*	```08_null_phy_beta.sh``` - ```08_null_phy_beta.R```
-*	```09_null_fun_alpha.sh``` - ```09_null_fun_alpha.R```
-* ```10_null_phy_alpha.sh``` - ```10_null_phy_alpha.R```
+*	```08_null_fun_beta.sh``` - ```08_null_fun_beta.R```
+*	```09_null_phy_beta.sh``` - ```09_null_phy_beta.R```
+*	```10_null_fun_alpha.sh``` - ```10_null_fun_alpha.R```
+* ```11_null_phy_alpha.sh``` - ```11_null_phy_alpha.R```
 
- 
-Due to the high memory usage of kernel density functional beta diversity metrics, 
-we were only able to estimate 2 iterations (2 cores) and 18gb of ram per computer 
-node for a total of 2000 high performance nodes. For phylogenetic beta diversity, 
-we were able to estimate 37 iterations simultaneous per computer node using 
-45gb of ram per node for a total of 6 high performance nodes. 
+<ins>Purpose:</ins> Calculates the null iterations for beta diversity in the 
+contemporary and native only species pools, and null iterations for alpha 
+diversity in the native only species pool. 
+Set number of nodes based on number of chunks for each diversity metric. For
+example, if the functional beta null input data is separated into 1000 chunks,
+then ```#SBATCH --array=1-1000```. Set memory to minimum value that allows
+job to run. For example: ```#SBATCH --mem=18gb```
 
-For alpha 
-diversity metrics, we estimated only null iterations for the native species 
-pool and this required less than half the resources of beta diversity null models. 
+<ins>DO NOT</ins> set cpu cores to value higher than number of iterations in 
+each chunk, as this will waste resources. For example, if 2 iterations per chunk,
+the maximum allowable number of cores is ```SBATCH --cpus-per-task=2 ```.
 
-<ins>Purpose:</ins> Calculates the null iterations for beta diversity in the   
-contemporary and native only species pools, and null iterations for alpha  
-diversity in the native only species pool.
-
-
-<ins>TIP:</ins> 
-
-
-<ins>TIP:</ins> Number of nodes, cores per node, and memory per node will 
-vary based on number of sites and methodology. Shell scripts can be edited to 
-adjust these settings accordingly. For example: 1000 nodes: ```#SBATCH --array=1-1000```, 
-2 CPU cores per node: ```SBATCH --cpus-per-task=2 ```, 
-18gb ram per node :```#SBATCH --mem=18gb```. We recommend that users experiment 
-with memory and CPU requirements with smaller number of null iterations before 
-running full job.
+<ins>TIP:</ins> We recommend that users experiment with memory and CPU 
+requirements with smaller number of null iterations before running full job.
 
 <ins>Outputs:</ins> [Null iterations](#null-iterations)
 
@@ -196,17 +251,10 @@ running full job.
 * ```11_beta_null_model_prep.sh``` - ```11_beta_null_model_prep.R```
 * ```12_alpha_null_model_prep.sh``` - ```12_alpha_null_model_prep.R```
 
-Observed and null model outputs were exported in multiple files, reflecting the 
-multi-nodal processing. We need to consolidate these files into single files 
-that contain a list of each null iteration.  The below shell scripts run their
-respective R script to consolidate null model outputs into single files, 
-separate native and contemporary species pool values, estimate the difference 
-in diversity between contemporary and native pools (delta), and export a single 
-file for each diversity metric (i.e., alpha, total beta, replacement, richness 
-difference, LCBD) for the contemporary species pool, native only species pool, 
-and delta values.
-
-<ins>Purpose:</ins> X
+<ins>Purpose:</ins> Calculates difference in LCBD between contemporary and 
+native pools (delta) for the observed values, and for each null iteration. 
+Consolidates outputs into single files, with separate delta, native, and 
+contemporary species pool values.
 
 <ins>Outputs:</ins>
 
@@ -233,7 +281,7 @@ script argument to reflect the number of diversity metrics of interest
 
 <ins>Outputs:</ins> [Summarized null model outputs](#summarized-null-model-outputs)
 
-### 7. Download the entire ```HPC_data``` directory to local machine.
+### 7. Download the entire ```HPC``` directory to local machine.
 <brk>
 
 ### 8. Summarize null model results - perform on local machine
@@ -250,7 +298,7 @@ decide between SES or ES values for further analyses.
 * [```native_alpha.rds```](#diversity-output-data)
 
 
-### Helper functions
+### Helper function scripts
 * ```null_model_algorithms.R```: Contains algorithms to randomize community, 
 trait, or phylogenetic data for null model analysis
 * ```diversity_batch_functions.R```: Contains functions that estimate multiple 
@@ -261,6 +309,8 @@ method (SES), empirical p-values, and p-value based effect sizes (ES), and
 reports optional diagnostic metrics.
 
 ## Output data strucutre
+See below for detailed descriptions of intermidate and final data products from
+this workflow.
 
 ### Observed beta diversity data
 **Files:**```his_fun_beta_obs.rds```, ```his_phy_beta_obs.rds```
@@ -272,6 +322,7 @@ contribution to beta diversity (LCBD) data frames. Files contain values for the
 contemporary (mod) and native (his) species pools, and taxonomic (tax) 
 functional (fun), and phylogenetic (phy) diversity facets. All files have the 
 following structure:
+
 * ```$beta```: list of 3 containing Sorensen pairwise beta diversity distance 
 objects
     * ```$Btotal```: distance object of total
@@ -293,14 +344,7 @@ Files contain named numeric objects with observed functional richness
 branches in phylogenetic tree). 
 
 ### Null iterations
-These data are the result of the randomization of traits and phylogenies (beta) 
-or randomization of communities (alpha). These data will be compiled and used to 
-create null distributions used to create null model standardized diversity values.
-
-Null model iterations are divided into separate files for alpha and beta 
-diversity based on diversity facet. Within diversity facets, iterations are 
-broken into chucks based on the number of HPC nodes were used to create the 
-data. The null model files are named in the following format
+**Files:** Each chunk has its own file name in the following format:
 
 > *pool*\_*facet*\_*metric*\_null\_*iteration*.rds
 
@@ -309,20 +353,25 @@ data. The null model files are named in the following format
 * *metric*: alpha or beta diversity
 * *iteration*: range of iterations included in file. e.g., 001-002
 
+These data are the result of the randomization of traits and phylogenies (beta) 
+or randomization of communities (alpha). These data will be compiled and used to 
+create null distributions used to create null model standardized diversity values.
+
+Null model iterations are divided into separate files for alpha and beta 
+diversity based on diversity facet. Within diversity facets, iterations are 
+broken into chucks based on the number of HPC nodes were used to create the 
+data.
+
 All files contain a list with items for each null iteration. Each beta diversity 
 iteration contains a list with the same structure as 
 [observed beta diversity](#observed-beta-diversity-data) and each alpha 
 diversity iteration contains a named numeric object with the same structure as 
 [observed alpha diversity](#observed-alpha-diversity-data).
 
-## SES inputs
+### SES inputs
    
-## Summarized null model outputs
-These data are used to evaluate the properties of the null distributions to 
-choose between standardized effect sizes and empirical effect sizes, and can be m
-erged together for plotting and to create the final dataframes for the use in analyses.
-
-Each diversity metric has its own file name in the following format:
+### Summarized null model outputs
+**Files:** Each diversity metric has its own file name in the following format:
 
 > *facet*\_*pool*\_*metric*\_ses_out.rds
 
@@ -332,7 +381,12 @@ Each diversity metric has its own file name in the following format:
 component; Bric = richness difference component; local contribution to beta 
 diversity = LCBD; alpha = alpha diversity)
 
+These data are used to evaluate the properties of the null distributions to 
+choose between standardized effect sizes and empirical effect sizes, and can be 
+merged together for plotting and to create the final data.frames for the use in analyses.
+
 All files contain a list with the following structure:
+
 * ```$obs```: observed diversity values
 * ```$null_mean```: means of null distributions
 * ```$null_sd```: standards deviation of null distributions
@@ -342,13 +396,16 @@ All files contain a list with the following structure:
 * ```$skew```: skewness of null distribution
 * ```$kurt```: kurtosis of null distribution
 
-The structure of the values in each list item are dependent on diversity metric: 
+The structure of the values in each list item are dependent on diversity metric:
+
 * beta diversity components (Btotal, Brepl, and Brich): distance objects,
 * LCBD: data frame with rows for each site and a column for LCBD of Btotal, Brepl, and Bric 
 * alpha: named numeric objects.
 
 
-## Diversity Output Data
+### Diversity output data
+**Files:** ```delta_lcbd.rds```, ```native_lcbd.rds```, ```native_alpha.rds```
+
 The combined observed and summarized effect size data for native alpha, native LCBD, and delta LCBD 
 These data can be used to replicate the spatial, redundancy, and variance partitioning analyses.
 

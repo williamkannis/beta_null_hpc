@@ -18,8 +18,8 @@ rm(list = ls())
 library(dplyr)
 
 # Directories
-input_dir <- "ses_inputs"
-out_dir <- "ses_outputs"
+input_dir <- "HPC/ses_inputs"
+out_dir <- "HPC/ses_outputs"
 
 # Load in custom SES function
 source("Scripts/null_model_effect_size_function.R")

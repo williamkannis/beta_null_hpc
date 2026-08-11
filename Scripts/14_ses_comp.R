@@ -15,8 +15,8 @@
 rm(list=ls())
 
 # Directories
-out_dir <- "HPC_data/ses_outputs"
-obs_dir <- "HPC_data/obs_outputs"
+out_dir <- "HPC/ses_outputs"
+obs_dir <- "HPC/obs_outputs"
 export_dir <- "Diversity Output Data"
 fig_dir <- "Results"
 

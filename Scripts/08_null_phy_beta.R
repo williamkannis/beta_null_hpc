@@ -25,7 +25,7 @@ library(ade4)
 library(parallel)
 
 # Directories
-out_dir <- "null_out"
+out_dir <- "HPC/null_out"
 
 # Load costume functions
 source("diversity_batch_functions.R")

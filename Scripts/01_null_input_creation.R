@@ -26,9 +26,9 @@ library(ape)
 data_dir <- "Diversity Input Data"
 
 # Export directories
-beta_dir <- "HPC_data/beta_null_input_data"
-obs_dir <- "HPC_data/beta_obs_input_data"
-alpha_dir <- "HPC_data/alpha_null_input"
+beta_dir <- "HPC/beta_null_input_data"
+obs_dir <- "HPC/beta_obs_input_data"
+alpha_dir <- "HPC/alpha_null_input"
 
 
 # load in custom null model algorithms

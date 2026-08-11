@@ -9,7 +9,7 @@
 # Created: 03/16/2026
 
 # Description: Estimates functional beta diversity and LCBD for for the observed
-# values from the contemporary and native only speceis pools. For use on  
+# values from the contemporary and native only species pools. For use on  
 # HPC cluster.
 
 # House keeping  ---------------------------------------------------------------
@@ -25,7 +25,7 @@ library(ade4)
 library(parallel)
 
 # Directories
-out_dir <- "obs_out"
+out_dir <- "HPC/obs_out"
 
 # Load costume functions
 source("diversity_batch_functions.R")

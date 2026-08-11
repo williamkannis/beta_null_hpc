@@ -22,9 +22,9 @@ library(purrr)
 library(parallel)
 
 # Directories
-obs_dir <- "obs_out"
-null_dir <- "null_out"
-out_dir <- "ses_inputs"
+obs_dir <- "HPC/obs_out"
+null_dir <- "HPC/null_out"
+out_dir <- "HPC/ses_inputs"
 
 # Load in data  ----------------------------------------------------------------
 

@@ -16,4 +16,4 @@ module load sqlite/3.43.2
 
 
 # Run the task for each index in the job array
-Rscript 06_obs_phy_alpha.R HPC_data/beta_obs_input_data/his_phy_obs_input_list.rds
+Rscript HPC/scripts_hpc/06_obs_phy_alpha.R HPC/beta_obs_input_data/his_phy_obs_input_list.rds

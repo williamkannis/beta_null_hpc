@@ -15,4 +15,4 @@ module load proj/9.2.1
 module load sqlite/3.43.2
 
 # Run the task for each index in the job array
-Rscript null_tax_beta_batch_array.R
+Rscript HPC/scripts_hpc/null_tax_beta_batch_array.R
