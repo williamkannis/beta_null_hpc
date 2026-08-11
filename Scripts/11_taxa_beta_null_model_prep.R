@@ -84,9 +84,9 @@ names(d_obs_input) <-
 names(d_null_input) <- 
   sapply(names(d_null_input),function(x) paste0("d_",x))
 obs_input <- 
-  c(mod_obs_input,d_obs_input)
+  c(d_obs_input)
 null_input <- 
-  c(mod_null_input,d_null_input)
+  c(d_null_input)
 
 # Check that lists are in same order
 all(names(obs_input) == names(null_input))
