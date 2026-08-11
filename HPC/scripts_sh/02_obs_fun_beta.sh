@@ -20,4 +20,4 @@ types=("mod" "his")
 type=${types[$SLURM_ARRAY_TASK_ID]}
 
 # Run the task for each index in the job array
-Rscript HPC/scripts_hpc/03_obs_fun_beta.R HPC/beta_obs_input_data/${type}_fun_obs_input_list.rds
+Rscript HPC/scripts_r/02_obs_fun_beta.R HPC/beta_obs_input_data/${type}_fun_obs_input_list.rds
