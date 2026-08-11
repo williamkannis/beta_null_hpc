@@ -30,13 +30,13 @@
 #' format in the exported values. The function estimates standardize effect 
 #' sizes in the traditional z score method (SES). Additionally empirical 
 #' p-values based effect sizes (ES) are calculated. Empirical p-values describe
-#' the proportion of the null model that is more extreme than the observed values
-#' and p-value based effect sizes (ES) are calculated. Finally the function 
-#' reports optional diagnostic metric to assess if null distributions are 
-#' symmetrical and normal. asymmetrical null distributions should be assessed 
-#' using empirical p-value based effect sizes rather than z-score based SES. 
-#' See Botta-Dukát (2018) for more information on selecting SES or p-value 
-#' based ES.
+#' the proportion of the null model that is more extreme than the observed 
+#' values and p-value based effect sizes (ES) are calculated. Finally the  
+#' function reports optional diagnostic metric to assess if null distributions  
+#' are symmetrical and normal. asymmetrical null distributions should be  
+#' assessed using empirical p-value based effect sizes rather than z-score  
+#' based SES. See Botta-Dukát (2018) for more information on selecting SES or 
+#'  p-value based ES.
 #' 
 #' @returns List containing:means of null distributions (null_mean), standard 
 #' deviation of null distribution (null_sd), z-score based standardized effect 
