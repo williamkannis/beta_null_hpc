@@ -1,6 +1,6 @@
 # Beta diversity change null modelling workflow for High Perfomance Computor Clusters
 
-Code and a general workflow for calculating null model standardized alpha 
+Code and general workflow for calculating null model standardized alpha 
 diversity, beta diversity, and local contribution to beta diversity (LCBD). 
 Standardized effect sizes (SES) were calculated for two species pools 
 (contemporary and native only), as well as for the change in diversity between 
@@ -40,12 +40,12 @@ If you use this code or workflow, please cite:
 
 R packages
 
-* ```'ade4'``` version: 1.7.23
+* ```'ade4'```version: 1.7.23
 * ```'adespatial'``` version: 0.3.28
 * ```'ape'``` version: 5.8.1
 * ```'BAT'``` version: 2.11.0
 * ```'DescTools'``` version: 0.99.60
-* ```'dplyr'``` version: 1.1.4
+* ```'dplyr'``` version: 1.1.4
 * ```'ggplot2'``` version: 4.0.2
 * ```'matrixStats'``` version: 1.5.0
 * ```'parallel'``` version: 4.5.0
@@ -54,14 +54,15 @@ R packages
 * ```'VGAM'```  version: 1.1.14
 
 
-### Create file directories
-First, download the ```Scripts``` folder. Next, users will need to create the
-below file directory to store diversity input data (e.g. community, trait, 
-phylogeny), formatted high performance computation input data, and the 
-resulting diversity outputs.
+
+### Input data
+First, download the entire repository. This should result in the following
+file structure for uses to place  diversity input data (e.g. community, trait, 
+phylogeny), formatted high performance computation input and intermediate data, 
+and the resulting diversity outputs.
 
 ```bash
-├── Scripts
+│
 ├── Diversity Input Data
 │   ├── mod_com_diversity_input.rds
 │   ├── his_com_diversity_input.rds
@@ -69,25 +70,19 @@ resulting diversity outputs.
 │   └── phylo_tree.rds
 │
 ├── HPC
-│   ├── beta_null_input_data
-│   │   ├── fun
-│   │   ├── phy
-│   ├── alpha_null_input
-│   │   ├── fun
-│   │   ├── phy
+│   │── scripts
 │   │── beta_obs_input_data
-│   │── null_out
 │   │── obs_out
+│   ├── beta_null_input_data
+│   ├── alpha_null_input
+│   │── null_out
 │   │── ses_inputs
 │   │── ses_outputs
-│   │── scripts_sh
-│   └── scripts_r
+│   └── scripts_do_not_run
 │
 └── Diversity Output Data
 
 ```
-
-## Input data
 Place community data for both species pools (contemporary - "mod" and native - 
 "his"), trait data, and phylongetic trees in ```Diversity Input Data``` with the 
 following names: 
@@ -102,9 +97,15 @@ Same structure as ```mod_com_diversity_input.rds```
 Data.frame or matrix with rows for species and columns for traits.
 * ```phylo_tree.rds```: Phylogenetic tree for all species in community data
 
+The remaining directories will populate with data throughout the workflow.
+
 ## Workflow
-Scripts can be found in the ```Scripts``` directory and are number based on
-order of workflow.
+
+Scripts needing to be ran by the use can be found in ```hpc/scripts``` 
+directory and are number based on order of workflow. Scripts found
+in ```hpc/scripts_do_not_run``` are either scripts ran on the HPC cluster using 
+shell scripts, or contain functions used by other scripts. **DO NOT** directly run 
+any script in ```hpc/scripts_do_not_run```.
 
 Completing the full workflow will results in observed values and null model 
 standardized effect sizes for taxonomic, functional, and phylogenetic beta 
@@ -123,8 +124,7 @@ Additionally, users can modify script to incorporate more or less time periods,
 of other diversity metrics of interest.
 
 ### 1. Prepare input data - perform on local machine
-**Script:** ```01_null_input_creation.R```
-
+**Script:** ```00_null_input_creation.R```
 
 <ins>Purpose:</ins> Prepares input data for the calculation of observed and null
 diversity values on high performance computer clusters. By default, 999 iteration
@@ -178,9 +178,12 @@ functional/phylogenetic data are a list of 999 random iterations.
 
 ### 2. Upload entire ```HPC``` directory to high performance cluster storage.
 For all steps utilizing HPC clusters, users will run shell scripts that will
-run their respective R script using specified HPC resources. We provide shell 
-scripts with recommended Slurm arguments, but these may need to be altered based 
-on the computational requirements of the user's data.
+run their respective R script using specified HPC resources. Below we only
+list the shell scripts, but R scripts can be found in ```scripts_do_not_run``` and
+have the same name as their shell scripts. 
+
+We provide shell scripts with recommended Slurm arguments, but these may need to 
+be altered based on the computational requirements of the user's data.
 
 See below for an example of commonly used Slurm arguments:
 
@@ -286,7 +289,7 @@ script argument to reflect the number of diversity metrics of interest
 <brk>
 
 ### 8. Summarize null model results - perform on local machine
-**Scripts:** ```14_ses_comp.R```
+**Scripts:** ```15_ses_comp.R```
 
 <ins>Purpose:</ins> Compiles and formats the resulting SES, ES, and diagnostic 
 stats across files. Also visualizes normality diagnostics to allow users to 
