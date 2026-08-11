@@ -80,7 +80,8 @@ resulting diversity outputs.
 │   │── obs_out
 │   │── ses_inputs
 │   │── ses_outputs
-│   └── scripts_hpc
+│   │── scripts_sh
+│   └── scripts_r
 │
 └── Diversity Output Data
 
