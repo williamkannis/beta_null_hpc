@@ -1,4 +1,4 @@
-# Beta diversity change null modelling workflow for High Perfomance Computor Clusters
+# Beta diversity change null modelling workflow for high perfomance computor clusters
 
 Code and general workflow for calculating null model standardized alpha 
 diversity, beta diversity, and local contribution to beta diversity (LCBD). 
