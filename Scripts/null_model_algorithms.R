@@ -13,7 +13,19 @@
 
 # Alpha diversity null models --------------------------------------------------
 
-# Region taxa swap
+#' Regional constrained taxa-swap null model algorithm
+#' 
+#' @description Random shuffles species labels in community matrix, constraining
+#' swaps to some defined regional species pool (HUC_2)
+#' 
+#' @param com Community matrix with columns for species and rows for site
+#' @param region_bridge  data.frame with column COMID that matches row names
+#' of com, and HUC_2 which define that site's region.
+#'
+#' @returns randomly shuffled community matrix with identical labels and 
+#' dimensions to input matrix
+#' 
+
 taxa_swap_region <- function(com,region_bridge) {
   
   # All species list
@@ -57,8 +69,58 @@ taxa_swap_region <- function(com,region_bridge) {
 
 # Beta diversity null models  --------------------------------------------------
 
-# Taxonomic - Nonnative species swap
-inv_swap <- function(mod_com,his_com,const = "reg.all") {
+#' Nonnative species swap taxonomic beta diversity change null model algorithm
+#' 
+#' @description Randomizes the occurrences of nonnative species in a 
+#' contemporary community data set, for use in taxonomic beta diversity change
+#' null models.
+#' 
+#' @param mod_com Community matrix containing all species (native+nonnative)  
+#' with columns for species and rows for site. Must have the same row names as
+#' mod_com.
+#' @param his_com Community matrix containing only native species with 
+#' columns for species and rows for site. Must have the same row names as
+#' mod_com. "Pseudo-historical" data
+#' @param region_bridge data.frame with column COMID that matches row names
+#' of com, and HUC_8 which define that site's region, and HUC_8 which defines
+#' a site's subbasin (used for native vs nonnative identification)
+#' @param const character ("reg.all","reg.cont", or "reg.freq"). Defines 
+#' constraints to null model randomization. See details for more information 
+#' 
+#'   
+#' @details 
+#' Null model algorithm based on Leprieur et al., (2008), that randomizes the 
+#' occurrences of nonnative species to test if directional  beta diversity 
+#' change is more extreme then expected by random distributions of nonnative
+#' species. This algorithm should only be used in pseudo-historic approaches, 
+#' where full community data is compared to community data with nonnative species 
+#' withheld as pseudo-historical community data.
+#' 
+#' This null model maintains an equiprobable total of columns by randomizing the 
+#' spatial distribution of nonnative species, maintaining their occurrence 
+#' frequency, but allowing communities to be unconstrained in the number of
+#' nonnative species they receive. Leprieur et al., (2008) provides detailed 
+#' arguments for the ecological validity of this equiprobable null model in 
+#' the context of invasion-driven Δβ. In short, the authors argue that the 
+#' model fits the expectation that nonnative species differ in their 
+#' colonization ability and propagule pressure, most communities are 
+#' susceptible to invasions, and that communities are rarely saturated. 
+#' 
+#' While this algorithm contains the occurrence frequency of each
+#' nonnative species to observed frequencies, this function allows 
+#' users to specify additional constraints. "reg.all" allows for a nonnative
+#' species to be placed into any region (HUC_2) and does not maintain regional
+#' occurrence frequencies; "reg.cont" restricts nonnative species into regions 
+#' where they have been observed, nonnative but does not maintain regional
+#' occurrence frequencies; and "reg.freq" restrict nonnative species
+#' to regions where they have occurred and maintains regional
+#' occurrence frequencies.
+#' 
+#' @returns community matrix with identical dimensions and labels as mod_com,
+#' but random distribution of nonnative species occurrences
+#' 
+
+inv_swap <- function(mod_com,his_com,region_bridge,const = "reg.all") {
   
   ## Prep community data ##
   
@@ -158,13 +220,16 @@ inv_swap <- function(mod_com,his_com,const = "reg.all") {
       nn_region_list <- lapply(nn.oc, function(x) region)
     } 
     
-    # Create a nonnative species community matrix with random occurrences, maintaining
-    # overall occupancy frequencies
+    # Create a nonnative species community matrix with random occurrences, 
+    # maintaining overall occupancy frequencies
     nn_com_list <-purrr::map2(nn.oc,names(nn.oc), function(oc,nn_sp){
       
-      # Remove native range from comid list, and limit to desired regional constraints
+      # Remove native range from comid list, and limit to desired regional 
+      # constraints
       native_hucs <- native_range[[nn_sp]]
-      native_comids <- row.names(his_com_for[his_com_for[,nn_sp] ==1,nn_sp,drop = F]) # TEMP UNTIL FIGURE OUT ISSUE
+      native_comids <- row.names(
+        his_com_for[his_com_for[,nn_sp] ==1,nn_sp,drop = F]
+        ) 
       nn_hucs <- nn_region_list[[nn_sp]]
       nn_comids <- region_bridge %>% 
         filter(!HUC_8 %in% native_hucs,
@@ -211,7 +276,17 @@ inv_swap <- function(mod_com,his_com,const = "reg.all") {
   null_com
 }
 
-# Functional null model
+
+#' Functional trait taxa-swap null model algorithm
+#' 
+#' @description Random shuffles species labels within a functional trait matrix
+#' 
+#' @param trait matrix with columns for functional traits, and rows for species
+#'
+#' @returns randomly shuffled trait matrix with identical labels and 
+#' dimensions to input matrix
+#'
+
 trait_swap <- function(trait) {
   sp <- row.names(trait)
   n_sp <- length(sp)
@@ -220,7 +295,16 @@ trait_swap <- function(trait) {
   trait[order(sp_null),]
 }
 
-# Phylogenetic null model
+
+#' Phylogenetic tree taxa-swap null model algorithm
+#' 
+#' @description Random shuffles species labels within a phylognetic tree
+#' 
+#' @param tree phylogenetic tree
+#'
+#' @returns phylogenetic tree with randomized tip labes
+#'
+
 tree_swap <- function(tree) {
   sp <- tree$tip.label
   n_sp <- length(sp)

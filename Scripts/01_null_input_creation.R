@@ -280,7 +280,12 @@ fun_alpha_input <- lapply(
 # Null beta input data - taxonomic  --------------------------------------------
 tax_beta_input <- parallel::mclapply(
   1:max_iter, 
-  function(x) inv_swap(mod_com,his_com,"reg.cont"),
+  function(x) inv_swap(
+    mod_com,
+    his_com,
+    region_bridge,
+    "reg.cont"
+    ),
   mc.cores =12
   )
 
