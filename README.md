@@ -10,9 +10,9 @@ via the slurm interface and shell scripts.
 
 For detailed methodology and justification see:
 
->[BLANK]()
+>[BLANK](BLANK)
 
->[BLANK]()
+>[BLANK](BLANK)
 
 
 For questions about this analysis, please contact:
@@ -72,9 +72,9 @@ and the resulting diversity outputs.
 ├── HPC
 │   │── scripts
 │   │── beta_obs_input_data
-│   │── obs_out
 │   ├── beta_null_input_data
-│   ├── alpha_null_input
+│   ├── alpha_null_input_data
+│   │── obs_out
 │   │── null_out
 │   │── ses_inputs
 │   │── ses_outputs
@@ -141,7 +141,7 @@ computer cores simultaneously, reduce memory pressure, reduce HPC queue times,
 and more efficiency use HPC resources.
 
 We offer recommended chunk sizes in the script based on diversity calculations
-used in the studies [here](BLANK) and [here]().
+used in the studies [here](BLANK) and [here](BLANK).
 For example, the 1998 iterations (999 iterations each pool) of functional beta 
 diversity we divided into 999 chunks with 2 iteration per node due to the high
 memory requirements of kernel density based functional metrics. COnversely,
@@ -167,7 +167,7 @@ taxa-swap and a regionally-constrained taxa-swap null model algorithms, which
 are ran using functions called from ```null_model_algorithms.R```. While the 
 algorithms provided were best suited for functional and phylogenetic beta 
 diversity, they may not be suited for all null model purposes. Users should 
-research the best model for their usage and modify ```01_null_input_creation.R``` 
+research the best model for their usage and modify ```00_null_input_creation.R``` 
 and ```null_model_algorithms.R``` accordingly.
 
 <ins>Outputs:</ins> Lists of input data for each metric and processing chunk.
@@ -211,7 +211,7 @@ See below for an example of commonly used Slurm arguments:
 and native only species pools, and the observed alpha diversity of the native 
 only species pool. Uses one high performance computer nodes for each time step. 
 
-<ins>Outputs:</ins> Intermediate files used for effect size calculations
+<ins>Outputs:</ins>
 
 * [Observed beta diversity data](#observed-beta-diversity-data)
 * [Observed alpha diversity data](#observed-alpha-diversity-data)
@@ -247,7 +247,7 @@ native pools (delta) for the observed values, and for each null iteration.
 Consolidates outputs into single files, with separate delta, native, and 
 contemporary species pool values.
 
-<ins>Outputs:</ins>
+<ins>Outputs:</ins> [Intermediate files used for effect size calculations](#formatted-ses-inputs)
 
 
 ### 6. Calculate effect sizes - perform using HPC
@@ -255,7 +255,7 @@ contemporary species pool values.
 
 <ins>Purpose:</ins> Estimates standardize effect sizes (SES) of each single
 metric using the custom function found in 
-[```null_model_effect_size_function.R```](#helper-functions).
+[```null_model_effect_size_function.R```](#helper-function-scripts).
 
 This function summarizes null distributions and calculates 
 standardize effect sizes in the traditional z score method (SES), empirical 
@@ -284,12 +284,14 @@ decide between SES or ES values for further analyses.
 
 <ins>Outputs:</ins> 
 
-* [```delta_lcbd.rds```](#diversity-output-data), 
-* [```native_lcbd.rds```](#diversity-output-data), 
-* [```native_alpha.rds```](#diversity-output-data)
+* [```delta_lcbd.rds```](#effect-size-dataframes), 
+* [```native_lcbd.rds```](#effect-size-dataframes), 
+* [```native_alpha.rds```](#effect-size-dataframes)
 
 
-### Helper function scripts
+### Helper function scripts 
+```scripts_do_not_run```
+
 * ```null_model_algorithms.R```: Contains algorithms to randomize community, 
 trait, or phylogenetic data for null model analysis
 * ```diversity_batch_functions.R```: Contains functions that estimate multiple 
@@ -303,7 +305,9 @@ reports optional diagnostic metrics.
 See below for detailed descriptions of intermidate and final data products from
 this workflow.
 
-### Observed beta diversity data
+### Observed beta diversity data 
+```HPC/obs_out```
+
 **Files:**```his_fun_beta_obs.rds```, ```his_phy_beta_obs.rds```
 , ```his_tax_beta_obs.rds```, ```mod_fun_beta_obs.rds```, ```mod_phy_beta_obs.rds```
 , ```mod_tax_beta_obs.rds```
@@ -326,7 +330,8 @@ specific to diveristy facets, and these differences are denoted with *X*:
     * ```X_Brepl```: LCBD of replacement component in facet *X*
     * ```X_Brich```: LCBD of richness difference component in facet *X*
 
-### Observed alpha diversity data
+### Observed alpha diversity data 
+```HPC/obs_out```
 
 **Files:**```his_fun_alpha_obs.rds```, ```his_phy_alpha_obs```
 
@@ -334,7 +339,9 @@ Files contain named numeric objects with observed functional richness
 (volume of kernel density hypervolume) or phylogenetic richness (number of 
 branches in phylogenetic tree). 
 
-### Null iterations
+### Null iterations 
+```HPC/null_out```
+
 **Files:** Each chunk has its own file name in the following format:
 
 > *pool*\_*facet*\_*metric*\_null\_*iteration*.rds
@@ -359,15 +366,36 @@ iteration contains a list with the same structure as
 diversity iteration contains a named numeric object with the same structure as 
 [observed alpha diversity](#observed-alpha-diversity-data).
 
-### SES inputs
+### Formatted ses inputs 
+```HPC/ses_input```
+
+**Files:** Each diversity metricand species pool has its own file name in the following format:
+
+> *facet*\_*pool*\_*metric*\_ses_input.rds
+
+* *facet*: diversity facet (taxonomic = tax; functional = fun; phylogenetic = phy)
+* *pool*: species pool (contemporary = mod; native = his; change = d)
+* *metric*: diversity metric (Btotal = total beta diversity; Brepl = replacement 
+component; Bric = richness difference component; local contribution to beta 
+diversity = LCBD; alpha = alpha diversity)
+
+These data are intermediate data product used to streamline the calculation of
+standardized effect sizes.
+
+All files contains a list with the following structure:
+
+* ```$obs```: observed diversity values of that metric and pool
+* ```$null_list: list of null iterations
    
-### Summarized null model outputs
-**Files:** Each diversity metric has its own file name in the following format:
+### Summarized null model outputs 
+```HPC/ses_output```
+
+**Files:** Each diversity metric and species pool has its own file name in the following format:
 
 > *facet*\_*pool*\_*metric*\_ses_out.rds
 
 * *facet*: diversity facet (taxonomic = tax; functional = fun; phylogenetic = phy)
-* *pool*: species pool (contemporary = mod; native = his)
+* *pool*: species pool (contemporary = mod; native = his; change = d)
 * *metric*: diversity metric (Btotal = total beta diversity; Brepl = replacement 
 component; Bric = richness difference component; local contribution to beta 
 diversity = LCBD; alpha = alpha diversity)
@@ -394,11 +422,16 @@ The structure of the values in each list item are dependent on diversity metric:
 * alpha: named numeric objects.
 
 
-### Diversity output data
+### Effect size dataframes 
+```Diversity Output Data```
+
 **Files:** ```delta_lcbd.rds```, ```native_lcbd.rds```, ```native_alpha.rds```
 
-The combined observed and summarized effect size data for native alpha, native LCBD, and delta LCBD 
-These data can be used to replicate the spatial, redundancy, and variance partitioning analyses.
+The combined observed and summarized effect size data for native alpha, native 
+LCBD, and delta LCBD. This is just one example of the type of summarized data
+that can result from this workflow. These data could be used in hypothetical
+analyses of beta diversity change.
+
 
 * ```delta_lcbd.rds```: Observed and null model empirical p-value based effect 
 sizes (ES) of taxonomic (no ES), functional and phylogenetic changes in local 
