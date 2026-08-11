@@ -4,13 +4,14 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 03/16/2026
 
 # Description: Estimates phylogenetic alpha diversity for the observed
 # values from the contemporary and native only species pools. For use on  
 # HPC cluster.
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -44,7 +45,4 @@ out <- BAT::alpha(comm = com,tree = tree)
 
 # Export outputs
 saveRDS(out,file.path(out_dir,"his_phy_alpha_obs.rds"))
-
-
-# End of script
 

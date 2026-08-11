@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 03/24/2026
 
@@ -12,6 +12,7 @@
 # format that can be easily summarized. Null model files are compiled into one,
 # file. This script is for use on a HPC cluster and import functional or 
 # taxonomic diversity values based on shell script argument.
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -41,7 +42,10 @@ his_obs <- readRDS(file.path(obs_dir,paste0(his_dim,"_obs.rds")))
 his_null_files <- list.files(null_dir,(his_dim))
 
 # Load in null files
-his_null_list <- lapply(his_null_files, function(x) readRDS(file.path(null_dir,x)))
+his_null_list <- lapply(
+  his_null_files, 
+  function(x) readRDS(file.path(null_dir,x))
+  )
 
 # Combine null processing chunks into one list
 his_null <- unlist(his_null_list,recursive = FALSE)

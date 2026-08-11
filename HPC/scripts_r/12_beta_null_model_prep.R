@@ -4,17 +4,18 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 03/24/2026
 
-# Description: Prepares null and observed values for each diversity metric into
-# format that can be easily summarized. Null model files are compiled into one,
-# and change (delta) between contemporary and native species pool is calculated for
-# observed and each null iteration. Each metric (total, replacement,lcbd, etc.) is
-# exported as a single file for batch processing. This script is for use on
-# a HPC cluster and import functional or taxonomic diversity values based on
-# shell script argument.
+# Description: Prepares null and observed values for taxonomic beta diversity 
+# into format that can be easily summarized. Null model files are compiled into 
+# one, and change (delta) between contemporary and native species pool is 
+# calculated for observed and each null iteration. Each metric (total, 
+# replacement, lcbd, etc.) is exported as a single file for batch processing. 
+# This script is for use on a HPC cluster and imports functional or phylogenetic 
+# diversity values based on shell script argument.
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -48,8 +49,14 @@ mod_null_files <- list.files(null_dir,mod_dim)
 his_null_files <- list.files(null_dir,his_dim)
 
 # Load in null files
-mod_null_list <- lapply(mod_null_files, function(x) readRDS(file.path(null_dir,x)))
-his_null_list <- lapply(his_null_files, function(x) readRDS(file.path(null_dir,x)))
+mod_null_list <- lapply(
+  mod_null_files, 
+  function(x) readRDS(file.path(null_dir,x))
+  )
+his_null_list <- lapply(
+  his_null_files, 
+  function(x) readRDS(file.path(null_dir,x))
+  )
 
 # Combine null processing chunks into one list
 mod_null <- unlist(mod_null_list,recursive = FALSE)
@@ -80,14 +87,22 @@ d_null_input <- purrr::map2(mod_null_input,his_null_input, function (x,y) {
 )
 
 # Combine native only, contemporary, and delta inputs
-names(his_obs_input) <- sapply(names(his_obs_input),function(x) paste0("his_",x))
-names(his_null_input) <- sapply(names(his_null_input),function(x) paste0("his_",x))
-names(mod_obs_input) <- sapply(names(mod_obs_input),function(x) paste0("mod_",x))
-names(mod_null_input) <- sapply(names(mod_null_input),function(x) paste0("mod_",x))
-names(d_obs_input) <- sapply(names(d_obs_input),function(x) paste0("d_",x))
-names(d_null_input) <- sapply(names(d_null_input),function(x) paste0("d_",x))
-obs_input <- c(his_obs_input,mod_obs_input,d_obs_input)
-null_input <- c(his_null_input,mod_null_input,d_null_input)
+names(his_obs_input) <- 
+  sapply(names(his_obs_input),function(x) paste0("his_",x))
+names(his_null_input) <- 
+  sapply(names(his_null_input),function(x) paste0("his_",x))
+names(mod_obs_input) <- 
+  sapply(names(mod_obs_input),function(x) paste0("mod_",x))
+names(mod_null_input) <- 
+  sapply(names(mod_null_input),function(x) paste0("mod_",x))
+names(d_obs_input) <- 
+  sapply(names(d_obs_input),function(x) paste0("d_",x))
+names(d_null_input) <- 
+  sapply(names(d_null_input),function(x) paste0("d_",x))
+obs_input <- 
+  c(his_obs_input,mod_obs_input,d_obs_input)
+null_input <- 
+  c(his_null_input,mod_null_input,d_null_input)
 
 # Check that lists are in same order
 all(names(obs_input) == names(null_input))
@@ -100,5 +115,4 @@ lapply(seq_len(length(obs_input)), function(i){
   out_name <- paste0(dim,"_",names(obs_input)[i],"_ses_input.rds")
   saveRDS(out_list,file.path(out_dir,out_name))
 })
-
 

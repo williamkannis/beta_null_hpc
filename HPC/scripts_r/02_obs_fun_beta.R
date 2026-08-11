@@ -4,13 +4,14 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 03/16/2026
 
 # Description: Estimates functional beta diversity and LCBD for for the observed
 # values from the contemporary and native only species pools. For use on  
 # HPC cluster.
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -48,7 +49,4 @@ out <- kernel_beta_batch(com = com,trait_hyp = trait)
 # Export outputs
 out_name <- paste0(time,"_fun_beta_obs",".rds")
 saveRDS(out,file.path(out_dir,out_name))
-
-
-# End of script
 

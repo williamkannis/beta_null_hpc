@@ -4,12 +4,13 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 02/14/2026
 
 # Description: Batch estimates functional alpha diversity for a list of
 # null model assemblages and exports files to directory. For use on HPC cluster
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -50,6 +51,4 @@ out_list <- mclapply(com_list,kernel_alpha_batch,trait = trait, mc.cores = cores
 
 out_name <- paste0("his_fun_alpha_null_",min_iter,"-",max_iter,".rds")
 saveRDS(out_list,file.path(out_dir,out_name))
-
-# End of script
 

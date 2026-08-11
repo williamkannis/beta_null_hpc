@@ -4,13 +4,14 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author:
+# Author: William K. Annis
 
 # Created: 03/16/2026
 
-# Description: Estimates phylogenetic beta diversity and LCBD for for the observed
-# values from the contemporary and native only species pools. For use on the 
-# HPC cluster.
+# Description: Estimates phylogenetic beta diversity and LCBD for for the 
+# observed values from the contemporary and native only species pools. For use 
+# on the HPC cluster.
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -48,7 +49,4 @@ out <- phy_beta_batch(com = com,tree = tree)
 # Export outputs
 out_name <- paste0(time,"_phy_beta_obs",".rds")
 saveRDS(out,file.path(out_dir,out_name))
-
-
-# End of script
 

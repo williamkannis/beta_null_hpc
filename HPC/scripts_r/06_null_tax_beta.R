@@ -1,18 +1,19 @@
-################################################################################
+#-------------------------------------------------------------------------------
 #
 #  Tax beta diversity null models cluster code
 #
-################################################################################
+#-------------------------------------------------------------------------------
 
-# AUTHOR: William Annis
+# Author: William K. Annis
 
-# CREATED: 02/14/2026
+# Created: 02/14/2026
 
-# DESCRIPTION: Batch estimates tax beta diversity and LCBD for a list of
-# null model assemblages and exports files to directory. For use on the Palmetto
+# Description: Batch estimates tax beta diversity and LCBD for a list of
+# null model assemblages and exports files to directory. For use on a HPC
 # cluster.
 
-### House keeping  #############################################################
+
+# House keeping  ---------------------------------------------------------------
 rm(list = ls())
 
 # Packages
@@ -37,7 +38,7 @@ input_file <-"tax_null_input_list.rds"
 com_list <- readRDS(file.path(input_dir,input_file))
 
 
-### Null model batch processing  ###############################################
+# Null model batch processing --------------------------------------------------
 
 # Run beta function
 out_list <- mclapply(com_list,tax_beta_batch, mc.cores = cores)

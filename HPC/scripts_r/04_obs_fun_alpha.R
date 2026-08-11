@@ -4,13 +4,14 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 03/16/2026
 
 # Description: Estimates functional alpha diversity for the observed
 # values from the contemporary and native only species pools. For use on  
 # HPC cluster.
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -44,7 +45,4 @@ out <- kernel_alpha_batch(com = com,trait_hyp = trait)
 
 # Export outputs
 saveRDS(out,file.path(out_dir,"his_fun_alpha_obs.rds"))
-
-
-# End of script
 

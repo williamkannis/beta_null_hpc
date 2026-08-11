@@ -4,12 +4,13 @@
 #
 #-------------------------------------------------------------------------------
 
-# Author: 
+# Author: William K. Annis
 
 # Created: 02/14/2026
 
 # Description: Batch estimates functional beta diversity and LCBD for a list of
 # null model assemblages and exports files to directory. For use on HPC cluster
+
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -58,7 +59,4 @@ if(export_results) {
 } else {
   print("some scheduled cores did return values. all jobs affected")
 }
-
-
-# End of script
 
