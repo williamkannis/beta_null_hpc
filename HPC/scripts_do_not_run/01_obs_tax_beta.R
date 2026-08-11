@@ -30,7 +30,7 @@ input_dir <- "HPC/beta_obs_input_data"
 out_dir <- "HPC/obs_out"
 
 # Load costume functions
-source("diversity_batch_functions.R")
+source("HPC/scripts_do_not_run/diversity_batch_functions.R")
 
 # Input data
 time <- commandArgs(trailingOnly = TRUE)

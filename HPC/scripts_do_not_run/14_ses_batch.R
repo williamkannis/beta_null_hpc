@@ -22,7 +22,7 @@ input_dir <- "HPC/ses_inputs"
 out_dir <- "HPC/ses_outputs"
 
 # Load in custom SES function
-source("Scripts/null_model_effect_size_function.R")
+source("HPC/scripts_do_not_run/null_model_effect_size_function.R")
 
 # Load in data based on shell script argument
 arg <- as.numeric(commandArgs(trailingOnly = TRUE))  # shell script argument

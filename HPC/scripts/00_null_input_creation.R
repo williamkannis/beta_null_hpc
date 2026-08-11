@@ -32,7 +32,7 @@ alpha_dir <- "HPC/alpha_null_input"
 
 
 # load in custom null model algorithms
-algo_dir <-"Scripts"
+algo_dir <-"HPC/scripts_do_not_run"
 source(file.path(algo_dir,"null_model_algorithms.R"))
 
 # Load data

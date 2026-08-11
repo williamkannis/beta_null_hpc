@@ -30,7 +30,7 @@ input_dir <- "HPC/beta_null_input_data"
 out_dir <- "HPC/null_out"
 
 # Load costume functions
-source("diversity_batch_functions.R")
+source("HPC/scripts_do_not_run/diversity_batch_functions.R")
 
 # Input data
 cores <- 20
