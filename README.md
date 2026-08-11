@@ -204,15 +204,10 @@ See below for an example of commonly used Slurm arguments:
 
 
 ### 3 .Calculate observed diversity values - perform using HPC
-**Scripts:**
+**Scripts:** ```01_obs_tax_beta.sh```, ```02_obs_fun_beta.sh```
+, ```03_obs_phy_beta.sh```, ```04_obs_fun_alpha.sh``` , ```05_obs_phy_alpha.sh```
 
-* ```01_obs_tax_beta.sh``` - ```01_obs_tax_beta.R```
-* ```02_obs_fun_beta.sh``` - ```02_obs_fun_beta.R```
-* ```03_obs_phy_beta.sh``` -```03_obs_phy_beta.R```
-*	```04_obs_fun_alpha.sh``` - ```04_obs_fun_alpha.R```
-*	```05_obs_phy_alpha.sh``` - ```05_obs_phy_alpha.R```
-
-<ins>Purpose:</ins> Calculates the observed beta diversity for the contemporary  
+<ins>Purpose:</ins> Calculates the observed beta diversity for the contemporary 
 and native only species pools, and the observed alpha diversity of the native 
 only species pool. Uses one high performance computer nodes for each time step. 
 
@@ -222,13 +217,8 @@ only species pool. Uses one high performance computer nodes for each time step.
 * [Observed alpha diversity data](#observed-alpha-diversity-data)
 
 ### 4. Calculate null diversity values  - perform using HPC
-**Scripts:**
-
-*	```06_null_tax_beta.sh``` - ```06_null_tax_beta.R```
-*	```07_null_fun_beta.sh``` - ```07_null_fun_beta.R```
-*	```08_null_phy_beta.sh``` - ```08_null_phy_beta.R```
-*	```09_null_fun_alpha.sh``` - ```09_null_fun_alpha.R```
-* ```10_null_phy_alpha.sh``` - ```10_null_phy_alpha.R```
+**Scripts:** ```06_null_tax_beta.sh```, ```07_null_fun_beta.sh```
+, ```08_null_phy_beta.sh```, ```09_null_fun_alpha.sh```, ```10_null_phy_alpha.sh```
 
 <ins>Purpose:</ins> Calculates the null iterations for beta diversity in the 
 contemporary and native only species pools, and null iterations for alpha 
@@ -249,11 +239,8 @@ requirements with smaller number of null iterations before running full job.
 
 
 ### 5. Prepare effect size input data - perform using HPC
-**Scripts:**
-
-* ```11_tax_beta_null_model_prep.sh``` - ```11_tax_beta_null_model_prep.R```
-* ```12_beta_null_model_prep.sh``` - ```12_beta_null_model_prep.R```
-* ```13_alpha_null_model_prep.sh``` - ```13_alpha_null_model_prep.R```
+**Scripts:** ```11_tax_beta_null_model_prep.sh```, ```12_beta_null_model_prep.sh```
+, ```13_alpha_null_model_prep.sh```
 
 <ins>Purpose:</ins> Calculates difference in LCBD between contemporary and 
 native pools (delta) for the observed values, and for each null iteration. 
@@ -264,7 +251,7 @@ contemporary species pool values.
 
 
 ### 6. Calculate effect sizes - perform using HPC
-**Scripts:**```14_batch_ses.sh``` - ```14_batch_ses.R```
+**Script:**```14_batch_ses.sh```
 
 <ins>Purpose:</ins> Estimates standardize effect sizes (SES) of each single
 metric using the custom function found in 
@@ -279,14 +266,14 @@ rather than z-score based SES. See
 [Botta-Dukát (2018](https://doi.org/10.1556/168.2018.19.1.8) for more 
 information on selecting SES or p-value based ES.
 
-<ins>TIP:</ins> Change the ```26``` in  the ```#SBATCH --array=1-26``` shell 
+<ins>TIP:</ins> Adjust ```#SBATCH --array=1-26``` shell 
 script argument to reflect the number of diversity metrics of interest 
 (i.e., number of items in ```ses_inputs``` directory).
 
 <ins>Outputs:</ins> [Summarized null model outputs](#summarized-null-model-outputs)
 
 ### 7. Download the entire ```HPC``` directory to local machine.
-<brk>
+
 
 ### 8. Summarize null model results - perform on local machine
 **Scripts:** ```15_ses_comp.R```
