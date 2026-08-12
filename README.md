@@ -1,18 +1,36 @@
 # Beta diversity change null modelling workflow for high perfomance computor clusters
 
-Code and general workflow for calculating null model standardized alpha 
-diversity, beta diversity, and local contribution to beta diversity (LCBD). 
-Standardized effect sizes (SES) were calculated for two species pools 
-(contemporary and native only), as well as for the change in diversity between 
-species pools.This workflow is designed to run using R on local machines with 
+This repository contains R and Slurm workflow for calculating observed and 
+null model standardized alpha diversity, beta diversity, and local contribution 
+to beta diversity (LCBD). Standardized effect sizes (SES) are calculated for two species pools 
+(contemporary and native only), that represent current and historical communities,
+as well as for the change in diversity between species pools.
+
+This workflow is designed to run using R on local machines with 
 the more expensive calculations ran using high performance computing clusters 
 via the slurm interface and shell scripts.
+
+The workflow was developed for two analyses
+
+The goal of this repository is 1) provide code for these analyses, and
+2) serve as general workflow
+
 
 For detailed methodology and justification see:
 
 >[BLANK](BLANK)
 
 >[BLANK](BLANK)
+
+
+
+If you use or adapt this workflow, please cite:
+
+[Manuscript citation]
+
+[Manuscript citation]
+
+[Workflow citation / DOI]
 
 
 For questions about this analysis, please contact:
@@ -24,18 +42,75 @@ Email: wannis@fsu.edu, williamkannis@gmail.com
 
 OrcID: 0009-0003-3541-8503
 ```
-If you use this code or workflow, please cite:
 
-[Manuscript citation]
+This repository serves as a guideline for performing beta diversity change
+null model analyses on HPC clusters. To reproduce the results of the associated
+manuscripts, see the following repositories:
 
-[Manuscript citation]
+[Drivers of multifaceted beta diversity change in invaded stream fish communities](BLANK)
 
-[Workflow citation / DOI]
+[Syndromes of multidimensional beta diversity change in invaded metacommunities](BLANK)
+
+## Workflow overview
+
+```text
+                            Input data
+                                │
+                                ▼
+                        00_prepare_inputs.R
+                                │
+                                ▼
+                        Upload to HPC storage
+                                │
+                   ┌───────────────────────────┐
+                   │                           │
+                   ▼                           ▼
+        ┌──────────────────────────────────────────────────┐
+        │                  HPC / Slurm                     │
+        │                                                  │
+        │  Observed diversity       Null model iterations  │
+        │          │                           │           │
+        │          └───────────────────────────┘           │ 
+        │                       │                          │
+        │                       ▼                          │
+        │                 Prepare SES inputs               │
+        │                       │                          │
+        │                       ▼                          │
+        │               Calculate effect sizes             │
+        └───────────────────────┬──────────────────────────┘
+                                │
+                                ▼
+                        Download HPC results
+                                │
+                                ▼
+                          15_ses_comp.R
+                                │
+                                ▼
+                        Final effect-size data
+```
 
 
-## Installation
 
-### Required Software
+## Workflow end products
+
+
+| Diversity facet | Alpha | Beta | LCBD | Change |
+| --------------- | ----: | ---: | ---: | -----: |
+| Taxonomic       |     — |    ✓ |    ✓ |      ✓ |
+| Functional      |     ✓ |    ✓ |    ✓ |      ✓ |
+| Phylogenetic    |     ✓ |    ✓ |    ✓ |      ✓ |
+
+
+
+
+## Applying workflow to new data
+MENTION THAT ONLY STEP 1 IS SPECIFIC TO OUR DATA. FUTURE RELEASES WILL HAVE MORE
+GENERAL NULL MODEL ALGORITHMS
+
+MENTION THAT THIS FOCUSED ON PUEDO HISTORICAL APPROACHES WITH TWO SPECIES POOL
+MAKE MORE GENERAL FUNCTIONS TO HANDLE OTHER TYPES
+
+## Required Software
 **R version**: 4.5.0
 
 R packages
@@ -55,8 +130,8 @@ R packages
 
 
 
-### Input data
-First, download the entire repository. This should result in the following
+## Input data
+First, download the entire repository. This will result in the following
 file structure for uses to place  diversity input data (e.g. community, trait, 
 phylogeny), formatted high performance computation input and intermediate data, 
 and the resulting diversity outputs.
@@ -105,7 +180,7 @@ Scripts needing to be ran by the use can be found in ```hpc/scripts```
 directory and are number based on order of workflow. Scripts found
 in ```hpc/scripts_do_not_run``` are either scripts ran on the HPC cluster using 
 shell scripts, or contain functions used by other scripts. **DO NOT** directly run 
-any script in ```hpc/scripts_do_not_run```.
+scripts in ```hpc/scripts_do_not_run```.
 
 Completing the full workflow will results in observed values and null model 
 standardized effect sizes for taxonomic, functional, and phylogenetic beta 
@@ -253,18 +328,9 @@ contemporary species pool values.
 ### 6. Calculate effect sizes - perform using HPC
 **Script:**```14_batch_ses.sh```
 
-<ins>Purpose:</ins> Estimates standardize effect sizes (SES) of each single
-metric using the custom function found in 
-[```null_model_effect_size_function.R```](#helper-function-scripts).
-
-This function summarizes null distributions and calculates 
-standardize effect sizes in the traditional z score method (SES), empirical 
-p-values, and p-value based effect sizes (ES), and reports optional diagnostic 
-metrics used to select between the two effect size methods. Asymmetrical null 
-distributions should be assessed using empirical p-value based effect sizes 
-rather than z-score based SES. See 
-[Botta-Dukát (2018](https://doi.org/10.1556/168.2018.19.1.8) for more 
-information on selecting SES or p-value based ES.
+<ins>Purpose:</ins> Estimates null model effect sizes of each metric, as well
+as null model diagnostics. See [here](#effect-size-calculations) 
+for more information on effect size calculations.
 
 <ins>TIP:</ins> Adjust ```#SBATCH --array=1-26``` shell 
 script argument to reflect the number of diversity metrics of interest 
@@ -301,6 +367,63 @@ distributions and calculates standardize effect sizes in the traditional z-score
 method (SES), empirical p-values, and p-value based effect sizes (ES), and 
 reports optional diagnostic metrics.
 
+## Null model methods
+
+### Taxonomic beta diveristy change
+
+### Phylogenetic and functional beta diversity
+
+### Phylogenetic and functional alpha diversity
+
+
+## Effect size calculations
+```null_model_effect_size_function.R```
+
+This workflows estimates null model effect sizes in two differnt ways:
+
+1. Z-score based standardized effect sizes (SES)
+
+$$
+\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}
+$$
+
+2. Empirical p-value based effect sizes (ES)
+
+$$
+\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}
+$$
+
+> **1. Z-score based standardized effect sizes (SES)**
+> 
+> $\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}$
+
+> **2. Empirical p-value based effect sizes (ES)**
+> 
+> $\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}$
+
+$$
+\text{1. Z-score based standardized effect sizes (SES)}
+$$
+$$
+\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}
+$$
+
+$$
+\text{2. Empirical p-value based effect sizes (ES)}
+$$
+$$
+\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}
+$$
+
+
+This function summarizes null distributions and calculates 
+standardize effect sizes in the traditional z score method (SES), empirical 
+p-values, and p-value based effect sizes (ES), and reports optional diagnostic 
+metrics used to select between the two effect size methods. Asymmetrical null 
+distributions should be assessed using empirical p-value based effect sizes 
+rather than z-score based SES. See 
+[Botta-Dukát (2018)](https://doi.org/10.1556/168.2018.19.1.8) for more 
+information on selecting SES or p-value based ES.
 ## Output data strucutre
 See below for detailed descriptions of intermidate and final data products from
 this workflow.
@@ -357,7 +480,7 @@ create null distributions used to create null model standardized diversity value
 
 Null model iterations are divided into separate files for alpha and beta 
 diversity based on diversity facet. Within diversity facets, iterations are 
-broken into chucks based on the number of HPC nodes were used to create the 
+broken into chunks based on the number of HPC nodes were used to create the 
 data.
 
 All files contain a list with items for each null iteration. Each beta diversity 
