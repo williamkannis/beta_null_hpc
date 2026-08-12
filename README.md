@@ -538,20 +538,55 @@ the maximum allowable number of cores is ```SBATCH --cpus-per-task=2 ```.
 requirements with smaller number of null iterations before running full job.
 
 ## Null model methods
-<ins>NOTE:</ins> This script only contains code to shuffle communities using 
-taxa-swap and a regionally-constrained taxa-swap null model algorithms, which 
-are ran using functions called from ```null_model_algorithms.R```. While the 
-algorithms provided were best suited for functional and phylogenetic beta 
-diversity, they may not be suited for all null model purposes. Users should 
-research the best model for their usage and modify ```00_null_input_creation.R``` 
-and ```null_model_algorithms.R``` accordingly.
+The functions in ```null_model_algorithms.R``` represent the null model 
+algorithms used in the mansucripts associated with this workflow. Below we
+briefly describe the algorithms used in the workflow
 
 ### Taxonomic beta diveristy change
+The purpose of this null model was to determine if observed patterns of beta
+diveristy change reflected non-random patterns of nonnative species occurances.
+To do so we used a homogneization null model developed by , for the use
+in studies that use contemproary and native species pools
+as proxies for true historical data. This null model maintains an equiprobable 
+total of columns by randomizing the spatial distribution of nonnative species, 
+maintaining their occurrence frequency, but allowing communities to be 
+unconstrained in the number of nonnative species they receive. As our the 
+mansucripts associated with this workflow covers large spatial extents with 
+biogeographical barriers, we constrained the model to only allow nonnative 
+species to be assigned to COMIDs within the regional species pools (hydrological 
+regions, HUC2s) in which they have been introduced. 
+See [here]() 
+for more information andarguments for the ecological validity of this null model 
 
 ### Phylogenetic and functional beta diversity
+Functional and phylogenetic diversity metrics are often inherently linked to 
+underlying taxonomic structure and require null model standardization to 
+determine the effects of species traits/phylogenies in diversity change. 
+When disentangling the effects of taxonomic structure on functional and 
+phylogenetic beta diversity metrics, it is important to maintain taxonomic 
+beta diversity. Therefore, we used a taxon-swap algorithm according to the 
+entire study extent as a species pool to preserve the observed taxonomic beta 
+diversity. The taxon-swap algorithm swaps the species labels on trait matrices 
+and phylogenetic trees to randomize traits/phylogeny while maintaining species 
+richness, occurrence frequencies, and co-occurrences 
 
 ### Phylogenetic and functional alpha diversity
+For native alpha diversity, we used a regionally-constrained taxon-swap model to 
+reflect historical dispersal limitations caused by biogeographic differences 
+among watershed boundaries. Here, we randomized community matrices, shuffling 
+species within regional species pools (HUC2s), which maintained species richness, 
+occurrence frequencies, and co-occurrences within regional species pools (HUC2s). 
 
+### Exapanding this workflow
+This workflow only contains the above null model alogrithms, which can limit the
+generabilty of this workflow. While the algorithms provided were best suited for 
+functional and phylogenetic beta diversity, as well as taxonomic beta diversity 
+change, they may not be suited for all null model purposes. For example, 
+users measuring taxonomic beta divseiry change with true historical data could
+benefit from an indpendent swap algorithm. Users should research the best null 
+model algorithm for their usage and modify ```00_null_input_creation.R``` and 
+```null_model_algorithms.R``` accordingly. Future releases will contian more
+null model algorithms.
 
 
 ## Effect size calculations
