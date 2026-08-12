@@ -377,9 +377,11 @@ reports optional diagnostic metrics.
 
 
 ## Effect size calculations
-```null_model_effect_size_function.R```
 
-This workflows estimates null model effect sizes in two differnt ways:
+
+Using ```null_model_effect_size_function.R```, this workflows estimates null 
+model effect sizes in two different ways:
+
 
 $$
 \text{1. Z-score based standardized effect sizes (SES)}
@@ -396,15 +398,18 @@ $$
 \text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}
 $$
 
+Where ```obs``` refers to observed diversity values, ```null``` refers to
+null distribution, ```sd``` refers to standard devation, ```p``` refers to the
+emprial p-value, ```r``` refers to the number of null iterations more extreme
+than the observed values, and ```n``` refers the the number of null iterations.
 
-This function summarizes null distributions and calculates 
-standardize effect sizes in the traditional z score method (SES), empirical 
-p-values, and p-value based effect sizes (ES), and reports optional diagnostic 
-metrics used to select between the two effect size methods. Asymmetrical null 
-distributions should be assessed using empirical p-value based effect sizes 
-rather than z-score based SES. See 
+This functional also summarizes the null distributions, and reports optional 
+noramility diagnostics used to select between the two effect size methods. 
+Asymmetrical null distributions should be assessed using empirical p-value based 
+effect sizes rather than z-score based SES. See 
 [Botta-Dukát (2018)](https://doi.org/10.1556/168.2018.19.1.8) for more 
 information on selecting SES or p-value based ES.
+
 ## Output data strucutre
 See below for detailed descriptions of intermidate and final data products from
 this workflow.
