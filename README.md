@@ -381,32 +381,13 @@ reports optional diagnostic metrics.
 
 This workflows estimates null model effect sizes in two differnt ways:
 
-1. Z-score based standardized effect sizes (SES)
-
-$$
-\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}
-$$
-
-2. Empirical p-value based effect sizes (ES)
-
-$$
-\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}
-$$
-
-> **1. Z-score based standardized effect sizes (SES)**
-> 
-> $\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}$
-
-> **2. Empirical p-value based effect sizes (ES)**
-> 
-> $\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}$
-
 $$
 \text{1. Z-score based standardized effect sizes (SES)}
 $$
 $$
 \text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}
 $$
+
 
 $$
 \text{2. Empirical p-value based effect sizes (ES)}
