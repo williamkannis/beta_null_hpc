@@ -100,7 +100,8 @@ manuscripts, see the following repositories:
 | Functional      |     ✓ |    ✓ |    ✓ |      ✓ |
 | Phylogenetic    |     ✓ |    ✓ |    ✓ |      ✓ |
 
-
+See [Output data structure](#output-data-strucutre) for more information on
+data products.
 
 
 ## Applying workflow to new data
@@ -205,45 +206,17 @@ of other diversity metrics of interest.
 diversity values on high performance computer clusters. By default, 999 iteration
 of random community matrices (regionally constrained and taxonomic beta null 
 models), random functional-spaces/phylogenetic-trees (taxa-swap null models).
-Users can change the number of null iterations created by modifying the 
-following code: ```max_iter  <- 999```.
+See the [Null model methods](#null-model-methods) section for information on 
+null model algorithms used as default. Input data are prepared in chunks of 
+random iterations to run on multiple PC nodes simultaneously. Each chunk 
+is ran on one node, with parallel processing occuring within node. Workflow
+contains the number ochunks and computational resources used in the associated
+manuscripts. For more information on HPC resources and recommended data chunking,
+see [HPC resources](#hpc-resources) section.
 
-Input data are prepared in chunks of random iterations to run on multiple PC nodes
-simultaneously, with each chunk being ran on one node. Each node will be able
-to run multiple null model iterations simultaneously across a user specified
-amount of cores. By separating iterations across nodes, users can use more 
-computer cores simultaneously, reduce memory pressure, reduce HPC queue times,
-and more efficiency use HPC resources.
+<ins>TIP:</ins>Users can change the number of null iterations created by 
+modifying the following code: ```max_iter  <- 999```.
 
-We offer recommended chunk sizes in the script based on diversity calculations
-used in the studies [here](BLANK) and [here](BLANK).
-For example, the 1998 iterations (999 iterations each pool) of functional beta 
-diversity we divided into 999 chunks with 2 iteration per node due to the high
-memory requirements of kernel density based functional metrics. COnversely,
-the 1998 iteration of phylogenetic beta diversity were divided into 6 chunks
-with 333 iterations per chunk
-
-Users should determine chunk sizes based their own computational needs, and
-can choose the number of chunks (i.e., nodes) per species pool by altering the 
-following code:
-
-```bash
-# How many cores per nodes to get 999 total
-sapply(c(1, 3, 9, 27, 37, 111),function(x) 999/x)
-
-# Create splits based on number of nodes needed
-n_groups_t <-      # taxonomic
-n_groups_f <- 500  # functions
-n_groups_p <- 3    # phylogenetic
-```
-
-<ins>NOTE:</ins> This script only contains code to shuffle communities using 
-taxa-swap and a regionally-constrained taxa-swap null model algorithms, which 
-are ran using functions called from ```null_model_algorithms.R```. While the 
-algorithms provided were best suited for functional and phylogenetic beta 
-diversity, they may not be suited for all null model purposes. Users should 
-research the best model for their usage and modify ```00_null_input_creation.R``` 
-and ```null_model_algorithms.R``` accordingly.
 
 <ins>Outputs:</ins> Lists of input data for each metric and processing chunk.
 For all metrics but taxonomic, list contains community and 
@@ -256,26 +229,6 @@ For all steps utilizing HPC clusters, users will run shell scripts that will
 run their respective R script using specified HPC resources. Below we only
 list the shell scripts, but R scripts can be found in ```scripts_do_not_run``` and
 have the same name as their shell scripts. 
-
-We provide shell scripts with recommended Slurm arguments, but these may need to 
-be altered based on the computational requirements of the user's data.
-
-See below for an example of commonly used Slurm arguments:
-
-```bash
-# Process using 6 HPC nodes
-#SBATCH --array=1-6  
-
-# Use 37 cpu cores per node
-#SBATCH --cpus-per-task=37
-
-# Use 45gb of ram per node
-#SBATCH --mem=45gb
-
-# 6 hours of walltime
-#SBATCH --time=6:00:00
-```
-
 
 
 ### 3 .Calculate observed diversity values - perform using HPC
@@ -298,17 +251,9 @@ only species pool. Uses one high performance computer nodes for each time step.
 <ins>Purpose:</ins> Calculates the null iterations for beta diversity in the 
 contemporary and native only species pools, and null iterations for alpha 
 diversity in the native only species pool. 
-Set number of nodes based on number of chunks for each diversity metric. For
-example, if the functional beta null input data is separated into 1000 chunks,
-then ```#SBATCH --array=1-1000```. Set memory to minimum value that allows
-job to run. For example: ```#SBATCH --mem=18gb```
 
-<ins>DO NOT</ins> set cpu cores to value higher than number of iterations in 
-each chunk, as this will waste resources. For example, if 2 iterations per chunk,
-the maximum allowable number of cores is ```SBATCH --cpus-per-task=2 ```.
-
-<ins>TIP:</ins> We recommend that users experiment with memory and CPU 
-requirements with smaller number of null iterations before running full job.
+<ins>TIP:</ins> Set number of nodes based on number of chunks for each diversity 
+metric. e.g., 1000 chunks = ```#SBATCH --array=1-1000```. 
 
 <ins>Outputs:</ins> [Null iterations](#null-iterations)
 
@@ -367,48 +312,7 @@ distributions and calculates standardize effect sizes in the traditional z-score
 method (SES), empirical p-values, and p-value based effect sizes (ES), and 
 reports optional diagnostic metrics.
 
-## Null model methods
 
-### Taxonomic beta diveristy change
-
-### Phylogenetic and functional beta diversity
-
-### Phylogenetic and functional alpha diversity
-
-
-## Effect size calculations
-
-
-Using ```null_model_effect_size_function.R```, this workflows estimates null 
-model effect sizes in two different ways:
-
-
-$$
-\text{1. Z-score based standardized effect sizes (SES)}
-$$
-$$
-\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}
-$$
-
-
-$$
-\text{2. Empirical p-value based effect sizes (ES)}
-$$
-$$
-\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}
-$$
-
-Where ```obs``` refers to observed diversity values, ```null``` refers to
-null distribution, ```sd``` refers to standard devation, ```p``` refers to the
-emprial p-value, ```r``` refers to the number of null iterations more extreme
-than the observed values, and ```n``` refers the the number of null iterations.
-
-This functional also summarizes the null distributions, and reports optional 
-noramility diagnostics used to select between the two effect size methods. 
-Asymmetrical null distributions should be assessed using empirical p-value based 
-effect sizes rather than z-score based SES. See 
-[Botta-Dukát (2018)](https://doi.org/10.1556/168.2018.19.1.8) for more 
-information on selecting SES or p-value based ES.
 
 ## Output data strucutre
 See below for detailed descriptions of intermidate and final data products from
@@ -576,3 +480,110 @@ variables in main analyses. Data frame consisting of the following columns:
     * ```fun_his_alpha_es```: Empirical effect size of ```fun_his_alpha```
     * ```phy_his_alpha_es```: Empirical effect size of ```phy_his_alpha```
 
+## HPC resources
+Input data are prepared in chunks of random iterations to run on multiple PC nodes
+simultaneously, with each chunk being ran on one node. Each node will be able
+to run multiple null model iterations simultaneously across a user specified
+amount of cores. By separating iterations across nodes, users can use more 
+computer cores simultaneously, reduce memory pressure, reduce HPC queue times,
+and more efficiency use HPC resources.
+
+We offer recommended chunk sizes in the script based on diversity calculations
+used in the studies [here](BLANK) and [here](BLANK).
+For example, the 1998 iterations (999 iterations each pool) of functional beta 
+diversity we divided into 999 chunks with 2 iteration per node due to the high
+memory requirements of kernel density based functional metrics. COnversely,
+the 1998 iteration of phylogenetic beta diversity were divided into 6 chunks
+with 333 iterations per chunk
+
+Users should determine chunk sizes based their own computational needs, and
+can choose the number of chunks (i.e., nodes) per species pool by altering the 
+following code:
+
+```bash
+# How many cores per nodes to get 999 total
+sapply(c(1, 3, 9, 27, 37, 111),function(x) 999/x)
+
+# Create splits based on number of nodes needed
+n_groups_t <-      # taxonomic
+n_groups_f <- 500  # functions
+n_groups_p <- 3    # phylogenetic
+```
+We provide shell scripts with recommended Slurm arguments, but these may need to 
+be altered based on the computational requirements of the user's data.
+
+See below for an example of commonly used Slurm arguments:
+
+```bash
+# Process using 6 HPC nodes
+#SBATCH --array=1-6  
+
+# Use 37 cpu cores per node
+#SBATCH --cpus-per-task=37
+
+# Use 45gb of ram per node
+#SBATCH --mem=45gb
+
+# 6 hours of walltime
+#SBATCH --time=6:00:00
+```
+Set memory to minimum value that allows
+job to run. For example: ```#SBATCH --mem=18gb```
+
+<ins>DO NOT</ins> set cpu cores to value higher than number of iterations in 
+each chunk, as this will waste resources. For example, if 2 iterations per chunk,
+the maximum allowable number of cores is ```SBATCH --cpus-per-task=2 ```.
+
+<ins>TIP:</ins> We recommend that users experiment with memory and CPU 
+requirements with smaller number of null iterations before running full job.
+
+## Null model methods
+<ins>NOTE:</ins> This script only contains code to shuffle communities using 
+taxa-swap and a regionally-constrained taxa-swap null model algorithms, which 
+are ran using functions called from ```null_model_algorithms.R```. While the 
+algorithms provided were best suited for functional and phylogenetic beta 
+diversity, they may not be suited for all null model purposes. Users should 
+research the best model for their usage and modify ```00_null_input_creation.R``` 
+and ```null_model_algorithms.R``` accordingly.
+
+### Taxonomic beta diveristy change
+
+### Phylogenetic and functional beta diversity
+
+### Phylogenetic and functional alpha diversity
+
+
+
+## Effect size calculations
+
+
+Using ```null_model_effect_size_function.R```, this workflows estimates null 
+model effect sizes in two different ways:
+
+
+$$
+\text{1. Z-score based standardized effect sizes (SES)}
+$$
+$$
+\text{SES} = \frac{\text{obs}_{\text{mean}} - \text{null}_{\text{mean}}}{\text{null}_{\text{sd}}}
+$$
+
+
+$$
+\text{2. Empirical p-value based effect sizes (ES)}
+$$
+$$
+\text{ES} = \text{probit}(1 - p) \quad \text{where} \quad p = \frac{r + 1}{n + 1}
+$$
+
+Where ```obs``` refers to observed diversity values, ```null``` refers to
+null distribution, ```sd``` refers to standard devation, ```p``` refers to the
+emprial p-value, ```r``` refers to the number of null iterations more extreme
+than the observed values, and ```n``` refers the the number of null iterations.
+
+This functional also summarizes the null distributions, and reports optional 
+noramility diagnostics used to select between the two effect size methods. 
+Asymmetrical null distributions should be assessed using empirical p-value based 
+effect sizes rather than z-score based SES. See 
+[Botta-Dukát (2018)](https://doi.org/10.1556/168.2018.19.1.8) for more 
+information on selecting SES or p-value based ES.
