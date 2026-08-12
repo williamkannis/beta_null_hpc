@@ -539,23 +539,23 @@ requirements with smaller number of null iterations before running full job.
 
 ## Null model methods
 The functions in ```null_model_algorithms.R``` represent the null model 
-algorithms used in the mansucripts associated with this workflow. Below we
+algorithms used in the manuscripts associated with this workflow. Below we
 briefly describe the algorithms used in the workflow
 
 ### Taxonomic beta diveristy change
 The purpose of this null model was to determine if observed patterns of beta
-diveristy change reflected non-random patterns of nonnative species occurances.
-To do so we used a homogneization null model developed by , for the use
-in studies that use contemproary and native species pools
+diversity change reflected non-random patterns of nonnative species occurrences.
+To do so we used a homogenization null model developed by Leprieur et al. (2007), 
+for the use in studies that use contemporary and native species pools
 as proxies for true historical data. This null model maintains an equiprobable 
 total of columns by randomizing the spatial distribution of nonnative species, 
 maintaining their occurrence frequency, but allowing communities to be 
 unconstrained in the number of nonnative species they receive. As our the 
-mansucripts associated with this workflow covers large spatial extents with 
+manuscripts associated with this workflow covers large spatial extents with 
 biogeographical barriers, we constrained the model to only allow nonnative 
-species to be assigned to COMIDs within the regional species pools (hydrological 
+species to be assigned to sites within the regional species pools (hydrological 
 regions, HUC2s) in which they have been introduced. 
-See [here]() 
+See [here](https://doi.org/10.1111/j.1472-4642.2007.00409.x) 
 for more information andarguments for the ecological validity of this null model 
 
 ### Phylogenetic and functional beta diversity
@@ -574,16 +574,16 @@ richness, occurrence frequencies, and co-occurrences
 For native alpha diversity, we used a regionally-constrained taxon-swap model to 
 reflect historical dispersal limitations caused by biogeographic differences 
 among watershed boundaries. Here, we randomized community matrices, shuffling 
-species within regional species pools (HUC2s), which maintained species richness, 
-occurrence frequencies, and co-occurrences within regional species pools (HUC2s). 
+species within regional species pools, which maintained species richness, 
+occurrence frequencies, and co-occurrences within regional species pools. 
 
-### Exapanding this workflow
-This workflow only contains the above null model alogrithms, which can limit the
-generabilty of this workflow. While the algorithms provided were best suited for 
+### Expanding this workflow
+This workflow only contains the above null model algorithms, which can limit the
+ability to generalize this workflow. While the algorithms provided were best suited for 
 functional and phylogenetic beta diversity, as well as taxonomic beta diversity 
 change, they may not be suited for all null model purposes. For example, 
-users measuring taxonomic beta divseiry change with true historical data could
-benefit from an indpendent swap algorithm. Users should research the best null 
+users measuring taxonomic beta diversity change with true historical data could
+benefit from an independent swap algorithm. Users should research the best null 
 model algorithm for their usage and modify ```00_null_input_creation.R``` and 
 ```null_model_algorithms.R``` accordingly. Future releases will contian more
 null model algorithms.
