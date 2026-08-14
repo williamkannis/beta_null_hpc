@@ -9,7 +9,7 @@ functional, and phylogenetic dimensions.
 
 This workflow is designed to run using R on local machines with the more 
 expensive calculations ran using high performance computing (HPC) with multiple 
-Linux systems in a cluster environment clusters. HPC tasks ran on R scripts via 
+Linux systems in a cluster environment. HPC tasks ran on R scripts via 
 shell scripts and Slurm Workload Manager interface.
 
 
