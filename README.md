@@ -18,12 +18,12 @@ The goal of this repository is 1) provide code for these analyses, and
 
 For detailed methodology and justification see:
 
->[BLANK](BLANK)
+[Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
->[BLANK](BLANK)
+[BLANK](BLANK)
 
 
-
+# Citation and contact information
 If you use or adapt this workflow, please cite:
 
 [Manuscript citation]
@@ -88,7 +88,21 @@ manuscripts, see the following repositories:
                                 ▼
                         Final effect-size data
 ```
+Completing the full workflow will results in observed values and null model 
+standardized effect sizes for taxonomic, functional, and phylogenetic beta 
+diversity/LCBD at two time steps, and change between those time steps. 
+Additionally, functional and phylogenetic alpha diversity at the first time step
+will be calculated in observed and effect size. Users can choose what metrics
+that want to calculate by running only the scripts that correspond to the metrics
+of interest. See table below for script naming codes:
 
+```bash
+tax = taxonomic
+fun = functional
+phy = phylogenetic
+```
+Additionally, users can modify script to incorporate more or less time periods,
+of other diversity metrics of interest.
 
 
 ## Workflow end products
@@ -99,6 +113,38 @@ manuscripts, see the following repositories:
 | Taxonomic       |     — |    ✓ |    ✓ |      ✓ |
 | Functional      |     ✓ |    ✓ |    ✓ |      ✓ |
 | Phylogenetic    |     ✓ |    ✓ |    ✓ |      ✓ |
+
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Product</th>
+      <th colspan="2">Q1 Performance</th>
+      <th colspan="2">Q2 Performance</th>
+    </tr>
+    <tr>
+      <th>Sales</th>
+      <th>Revenue</th>
+      <th>Sales</th>
+      <th>Revenue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Widget A</td>
+      <td>150</td>
+      <td>$1,500</td>
+      <td>180</td>
+      <td>$1,800</td>
+    </tr>
+    <tr>
+      <td>Widget B</td>
+      <td>90</td>
+      <td>$900</td>
+      <td>120</td>
+      <td>$1,200</td>
+    </tr>
+  </tbody>
+</table>
 
 See [Output data structure](#output-data-strucutre) for more information on
 data products.
@@ -140,10 +186,10 @@ and the resulting diversity outputs.
 ```bash
 │
 ├── Diversity Input Data
-│   ├── mod_com_diversity_input.rds
-│   ├── his_com_diversity_input.rds
-│   ├── trait_diversity_input.rds
-│   └── phylo_tree.rds
+│   ├── mod_com_diversity_input.rds*
+│   ├── his_com_diversity_input.rds*
+│   ├── trait_diversity_input.rds*
+│   └── phylo_tree.rds*
 │
 ├── HPC
 │   │── scripts
@@ -158,9 +204,10 @@ and the resulting diversity outputs.
 │
 └── Diversity Output Data
 
+(*) Users will need to add these files
 ```
 Place community data for both species pools (contemporary - "mod" and native - 
-"his"), trait data, and phylongetic trees in ```Diversity Input Data``` with the 
+"his"), trait data, and phylogenetic trees in ```Diversity Input Data``` with the 
 following names: 
 
 * ```mod_com_diversity_input.rds```: Community data for contemporary species 
@@ -183,21 +230,6 @@ in ```hpc/scripts_do_not_run``` are either scripts ran on the HPC cluster using
 shell scripts, or contain functions used by other scripts. **DO NOT** directly run 
 scripts in ```hpc/scripts_do_not_run```.
 
-Completing the full workflow will results in observed values and null model 
-standardized effect sizes for taxonomic, functional, and phylogenetic beta 
-diversity/LCBD at two time steps, and change between those time steps. 
-Additionally, functional and phylogenetic alpha diversity at the first time step
-will be calculated in observed and effect size. Users can choose what metrics
-that want to calculate by running only the scripts that correspond to the metrics
-of interest. See table below for script naming codes:
-
-```bash
-tax = taxonomic
-fun = functional
-phy = phylogenetic
-```
-Additionally, users can modify script to incorporate more or less time periods,
-of other diversity metrics of interest.
 
 ### 1. Prepare input data - perform on local machine
 **Script:** ```00_null_input_creation.R```
