@@ -47,7 +47,7 @@ This repository serves as a guideline for performing beta diversity change
 null model analyses on HPC clusters. To reproduce the results of the associated
 manuscripts, see the following repositories:
 
-[Drivers of multifaceted beta diversity change in invaded stream fish communities](BLANK)
+[Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
 [Syndromes of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
