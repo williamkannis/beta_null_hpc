@@ -1,17 +1,17 @@
-# Beta diversity change null modelling workflow for high performance computer (HPC) clusters
+# Beta diversity change null modelling workflow for Slurm-based high performance computer (HPC) clusters
 
 # Anonymous peer review version
 
-This repository contains a R and Slurm workflow for calculating observed and 
+This repository contains a R workflow for calculating observed and 
 null model standardized alpha diversity, beta diversity, and local contribution 
 to beta diversity (LCBD) changes. Workflow estimates values in the taxonomic, 
 functional, and phylogenetic dimensions.
 
-Estimating multiple null iterations of multidimensional diversity is 
-computationally demanding and can have large wall times, this is especially the 
-case with beta diversity. As such, This workflow is designed to run using 
-R on local machines  with the more expensive calculations ran using high 
-performance computing (HPC) clusters via the slurm interface and shell scripts.
+This workflow is designed to run using R on local machines with the more 
+expensive calculations ran using high performance computing (HPC) with multiple 
+Linux systems in a cluster environment clusters. HPC tasks ran on R scripts via 
+shell scripts and Slurm Workload Manager interface.
+
 
 The workflow was developed for the two following analyses:
 
@@ -24,13 +24,14 @@ Refer to these studies for detailed methodology and justification.
 # Citation and contact information
 If you use or adapt this workflow, please cite:
 
-BLANK. Null models reveal differing drivers of multidimensional beta diversity 
-change in invaded metacommunities. in review
+>BLANK. Null models reveal differing drivers of multidimensional beta diversity 
+>change in invaded metacommunities. in review
 
-BLANK. Invasion syndromes based on shared changes in multidimensional beta diversity.
-in review
+>BLANK. Invasion syndromes based on shared changes in multidimensional beta diversity.
+>in review
 
-[Workflow citation / DOI]
+>BLANK. Beta diversity change null modelling workflow for Slurm-based high 
+>performance computer (HPC) clusters. [Workflow citation / DOI]
 
 
 For questions about this analysis, please contact:
