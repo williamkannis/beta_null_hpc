@@ -97,7 +97,8 @@ Users can then download the effect size data back to their local machine to
 summarize or conduct analyses on these data.
 
 While this workflow is tailored towards the manuscripts' data structure and 
-methodology, we offer recommendations to generalize the workflow [here]()
+methodology, we offer recommendations to generalize the workflow 
+[here](#generalizing-this-workflow).
 
 
 ## Workflow null model end products
@@ -257,7 +258,9 @@ shell scripts, or contain functions used by other scripts. **DO NOT** directly r
 scripts in ```hpc/scripts_do_not_run```.
 
 
-### 1. Prepare input data - perform on local machine
+### 1. Prepare input data
+**Perform on local machine**
+
 **Script:** ```00_null_input_creation.R```
 
 <ins>Purpose:</ins> Prepares input data for the calculation of observed and null
@@ -285,7 +288,9 @@ list the shell scripts, but R scripts can be found in ```scripts_do_not_run``` a
 have the same name as their shell scripts. 
 
 
-### 3 .Calculate observed diversity values - perform using HPC
+### 3 .Calculate observed diversity values
+**Perform on HPC**
+
 **Scripts:** ```01_obs_tax_beta.sh```, ```02_obs_fun_beta.sh```
 , ```03_obs_phy_beta.sh```, ```04_obs_fun_alpha.sh``` , ```05_obs_phy_alpha.sh```
 
@@ -298,7 +303,9 @@ only species pool. Uses one high performance computer nodes for each time step.
 * [Observed beta diversity data](#observed-beta-diversity-data)
 * [Observed alpha diversity data](#observed-alpha-diversity-data)
 
-### 4. Calculate null diversity values  - perform using HPC
+### 4. Calculate null diversity values
+**Perform on HPC**
+
 **Scripts:** ```06_null_tax_beta.sh```, ```07_null_fun_beta.sh```
 , ```08_null_phy_beta.sh```, ```09_null_fun_alpha.sh```, ```10_null_phy_alpha.sh```
 
@@ -309,7 +316,9 @@ diversity in the native only species pool.
 <ins>Outputs:</ins> [Null iterations](#null-iterations)
 
 
-### 5. Prepare effect size input data - perform using HPC
+### 5. Prepare effect size input data
+**Perform on HPC**
+
 **Scripts:** ```11_tax_beta_null_model_prep.sh```, ```12_beta_null_model_prep.sh```
 , ```13_alpha_null_model_prep.sh```
 
@@ -321,7 +330,9 @@ contemporary species pool values.
 <ins>Outputs:</ins> [Intermediate files used for effect size calculations](#formatted-ses-inputs)
 
 
-### 6. Calculate effect sizes - perform using HPC
+### 6. Calculate effect sizes
+**Perform on HPC**
+
 **Script:**```14_batch_ses.sh```
 
 <ins>Purpose:</ins> Estimates null model effect sizes of each metric, as well
@@ -334,7 +345,9 @@ metrics of interest  (i.e., number of items in ```ses_inputs``` directory).
 ### 7. Download the entire ```HPC``` directory to local machine.
 
 
-### 8. Summarize null model results - perform on local machine
+### 8. Summarize null model results
+**Perform on local machine**
+
 **Scripts:** ```15_ses_comp.R```
 
 <ins>Purpose:</ins> Compiles and formats the resulting SES, ES, and diagnostic 
@@ -567,16 +580,6 @@ among watershed boundaries. Here, we randomized community matrices, shuffling
 species within regional species pools, which maintained species richness, 
 occurrence frequencies, and co-occurrences within regional species pools. 
 
-### Expanding this workflow
-This workflow only contains the above null model algorithms, which can limit the
-ability to generalize this workflow. While the algorithms provided were best suited for 
-functional and phylogenetic beta diversity, as well as taxonomic beta diversity 
-change, they may not be suited for all null model purposes. For example, 
-users measuring taxonomic beta diversity change with true historical data could
-benefit from an independent swap algorithm. Users should research the best null 
-model algorithm for their usage and modify ```00_null_input_creation.R``` and 
-```null_model_algorithms.R``` accordingly. Future releases will contian more
-null model algorithms.
 
 
 ## Effect size calculations
@@ -613,24 +616,64 @@ effect sizes rather than z-score based SES. See
 [Botta-Dukát (2018)](https://doi.org/10.1556/168.2018.19.1.8) for more 
 information on selecting SES or p-value based ES.
 
-## Applying workflow to new data
-MENTION THAT ONLY STEP 1 IS SPECIFIC TO OUR DATA. FUTURE RELEASES WILL HAVE MORE
-GENERAL NULL MODEL ALGORITHMS
+## Generalizing this workflow
+The diversity output data structure and most of the workflow will remain the 
+same for most use cases. There are certain cases that will result in changes to the 
+workflow: 
 
-MENTION THAT THIS FOCUSED ON PUEDO HISTORICAL APPROACHES WITH TWO SPECIES POOL
-MAKE MORE GENERAL FUNCTIONS TO HANDLE OTHER TYPES
+Below, we outline how users will need to adapt workflow to accommodate  these changes
 
-Users can choose what metrics
-that want to calculate by running only the scripts that correspond to the metrics
-of interest. See table below for script naming codes:
+### 4. HPC resources
+
+### 1. Null model algorithms choices
+The current workflow is limited in null model [algorithms](#null-model-methods) 
+to those used in the associated manuscripts. While these algorithms fit many
+broad cases such as functional and phylogenetic beta diversity, there are some
+limitations with the alpha diversity and taxonomic beta diversity null models.
+For example, users measuring taxonomic beta diversity change with true 
+historical data could benefit from an independent swap algorithm. Users should 
+research the best null  model algorithm for their usage and modify ```00_null_input_creation.R``` 
+and ```null_model_algorithms.R``` accordingly. Future releases will contain more
+null model algorithms.
+
+### 2. Diveristy output choices
+The current workflow estimates taxonomic, functional, and phylogenetic alpha,
+diversity, beta diversity, and LCBD. If users only want to measure certain
+dimensions (e.g., phylogenetic only), or a certain metric (e.g., no alpha
+diversity), then users should ignore the corresponding sections 
+of ```00_null_input_creation.R``` that produce input data for metrics not of 
+interest.
+
+Additionally, users should only run the shell scripts in ```HPC/scripts``` that
+correspond to the dimensions and metrics of interest. See table below for script 
+naming codes:
 
 ```bash
 tax = taxonomic
 fun = functional
 phy = phylogenetic
+
+obs = observed
+null = null iterations
 ```
-Additionally, users can modify script to incorporate more or less time periods,
-of other diversity metrics of interest.
+
+Finally, users will need to adjust ```#SBATCH --array=1-26``` 
+in ```HPC/scripts/14_ses_batch.sh``` to reflect the number of diveristy
+metrics in ```HPC/ses_inputs```.
+
+### 3. Species pools and change
+
+
+
+
+
+
+
+
+
+
+
+
 ### HPC resources
 <ins>TIP:</ins>Users can change the number of null iterations created by 
 modifying the following code: ```max_iter  <- 999```.
@@ -639,9 +682,7 @@ modifying the following code: ```max_iter  <- 999```.
 metric. e.g., 1000 chunks = ```#SBATCH --array=1-1000```. 
 
 
-<ins>TIP:</ins> Adjust ```#SBATCH --array=1-26``` shell 
-script argument to reflect the number of diversity metrics of interest 
-(i.e., number of items in ```ses_inputs``` directory).
+
 
 Input data are prepared in chunks of random iterations to run on multiple PC nodes
 simultaneously, with each chunk being ran on one node. Each node will be able
@@ -650,37 +691,45 @@ amount of cores. By separating iterations across nodes, users can use more
 computer cores simultaneously, reduce memory pressure, reduce HPC queue times,
 and more efficiency use HPC resources.
 
-We offer recommended chunk sizes in the script based on diversity calculations
-used in the studies [here](BLANK) and [here](BLANK).
-For example, the 1998 iterations (999 iterations each pool) of functional beta 
-diversity we divided into 999 chunks with 2 iteration per node due to the high
-memory requirements of kernel density based functional metrics. COnversely,
-the 1998 iteration of phylogenetic beta diversity were divided into 6 chunks
-with 333 iterations per chunk
+In the workflow, the default number of chunks and iterations are based on the 
+memory requirement and needs of our study. Consequently, the number of nodes and
+cores in the workflow are based on these requirements. For example, the 1998 
+iterations (999 iterations each pool) of functional beta diversity we divided 
+into 999 chunks with 2 iteration per node due to the high memory requirements of 
+kernel density based functional metrics. Conversely, the 1998 iteration of 
+phylogenetic beta diversity were divided into 6 chunks with 333 iterations per 
+chunk
 
 Users should determine chunk sizes based their own computational needs, and
-can choose the number of chunks (i.e., nodes) per species pool by altering the 
-following code:
+can choose the number of chunks per species pool, and number of iterations by 
+altering the following code in ```00_null_input_creation.R```:
+
+```bash
+max_iter  <- 999
+```
 
 ```bash
 # How many cores per nodes to get 999 total
 sapply(c(1, 3, 9, 27, 37, 111),function(x) 999/x)
 
 # Create splits based on number of nodes needed
-n_groups_t <-      # taxonomic
+n_groups_t <- 1     # taxonomic
 n_groups_f <- 500  # functions
 n_groups_p <- 3    # phylogenetic
 ```
-We provide shell scripts with recommended Slurm arguments, but these may need to 
-be altered based on the computational requirements of the user's data.
 
-See below for an example of commonly used Slurm arguments:
+Users will then need to alter the shell scripts in the 
+[observed](#) 
+and [null iteration](#4-calculate-null-diversity-values) 
+workflow steps to reflect
+the number of chunks, requrired memory, and number cores, and wall time for 
+each metric. See below for an example:
 
 ```bash
-# Process using 6 HPC nodes
+# Process 6 chunks using 6 HPC nodes 
 #SBATCH --array=1-6  
 
-# Use 37 cpu cores per node
+# Use 37 cpu cores per node (i.e., 37 parralel operations per chunk)
 #SBATCH --cpus-per-task=37
 
 # Use 45gb of ram per node
@@ -689,12 +738,19 @@ See below for an example of commonly used Slurm arguments:
 # 6 hours of walltime
 #SBATCH --time=6:00:00
 ```
+
+
+We provide shell scripts with recommended Slurm arguments, but these may need to 
+be altered based on the computational requirements of the user's data.
+
+
 Set memory to minimum value that allows
 job to run. For example: ```#SBATCH --mem=18gb```
 
-<ins>DO NOT</ins> set cpu cores to value higher than number of iterations in 
+<ins>TIP:</ins> We recommend that users experiment with memory and CPU 
+requirements with smaller number of null iterations before running full job.
+
+<ins>TIP:</ins> Do not set cpu cores to value higher than number of iterations in 
 each chunk, as this will waste resources. For example, if 2 iterations per chunk,
 the maximum allowable number of cores is ```SBATCH --cpus-per-task=2 ```.
 
-<ins>TIP:</ins> We recommend that users experiment with memory and CPU 
-requirements with smaller number of null iterations before running full job.
