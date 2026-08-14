@@ -741,7 +741,7 @@ obs = observed
 null = null iterations
 ```
 Ignoring certain metrics will not require additional changes to the workflow.
-Users will just need to adjust ```#SBATCH --array=1-26``` 
+Users will just need to adjust ```#SBATCH --array=1-30``` 
 in ```14_ses_batch.sh``` to reflect the number of diversity
 metrics in ```HPC/ses_inputs```.
 

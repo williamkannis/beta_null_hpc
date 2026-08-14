@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=ses_batch
-#SBATCH --array=1-26
+#SBATCH --array=1-30
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=22gb
 #SBATCH --time=00:10:00
