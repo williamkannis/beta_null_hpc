@@ -564,7 +564,7 @@ biogeographical barriers, we constrained the model to only allow nonnative
 species to be assigned to sites within the regional species pools (hydrological 
 regions, HUC2s) in which they have been introduced. 
 See [here](https://doi.org/10.1111/j.1472-4642.2007.00409.x) 
-for more information andarguments for the ecological validity of this null model 
+for more information and arguments for the ecological validity of this null model 
 
 ### Phylogenetic and functional beta diversity
 Functional and phylogenetic diversity metrics are often inherently linked to 
@@ -626,8 +626,8 @@ The workflow as provided is designed to produce the beta diversity metrics used
 in the two associated manuscripts, but offer an overall general framework. User
 will understandably need to make some adjustments to the workflow to match their
 data and goals. The diversity output data structure and most of the workflow 
-will remain the same for most use cases. However, regardless of choices, there 
-are certain cases that will result in changes to the workflow:
+will remain the same for most use cases. However, there are certain cases that 
+will result in changes to the workflow:
 
 1. Users using this workflow with their own data, regardless of structure, 
 will likely require different HPC resources (e.g. nodes, cores, memory).
@@ -653,8 +653,8 @@ computer cores simultaneously, reduce memory pressure, reduce HPC queue times,
 and more efficiency use HPC resources.
 
 In the workflow, the default number of chunks and iterations are based on the 
-memory requirement and needs of our study. Consequently, the number of nodes and
-cores in the workflow are based on these requirements. For example, the 1998 
+memory requirement and needs of the associated manuscripts. Consequently, the number of nodes and
+cores in the workflow are also based on these requirements. For example, the 1998 
 iterations (999 iterations each pool) of functional beta diversity we divided 
 into 999 chunks with 2 iteration per node due to the high memory requirements of 
 kernel density based functional metrics. Conversely, the 1998 iteration of 
@@ -716,13 +716,12 @@ research the best null  model algorithm for their usage and modify ```00_null_in
 and ```null_model_algorithms.R``` accordingly. Future releases will contain more
 null model algorithms.
 
-### 2. Diveristy output choices
+### 2. Diversity output choices
 The current workflow estimates taxonomic, functional, and phylogenetic alpha,
 diversity, beta diversity, and LCBD. If users only want to measure certain
 dimensions (e.g., phylogenetic only), or a certain metric (e.g., no alpha
 diversity), then users should ignore the corresponding sections 
-of ```00_null_input_creation.R``` that produce input data for metrics not of 
-interest.
+of ```00_null_input_creation.R``` that produce input data for those metrics.
 
 Additionally, users should only run the shell scripts in ```HPC/scripts``` that
 correspond to the dimensions and metrics of interest. See table below for script 
@@ -736,9 +735,9 @@ phy = phylogenetic
 obs = observed
 null = null iterations
 ```
-
-Finally, users will need to adjust ```#SBATCH --array=1-26``` 
-in ```14_ses_batch.sh``` to reflect the number of diveristy
+Ignoring certain metrics will not require additional changes to the workflow.
+Users will just need to adjust ```#SBATCH --array=1-26``` 
+in ```14_ses_batch.sh``` to reflect the number of diversity
 metrics in ```HPC/ses_inputs```.
 
 ### 3. Species pools and change
@@ -750,10 +749,11 @@ or ```12_beta_null_model_prep.R``` scripts
 Users wanting only to estimate one time step should ignore all code in the above 
 scripts that creates objects prefixed by "his_" (native pool). Additionally,
 users should avoid code that creates objects prefixed by "d_" if they do not
-want to create beta diversity change metrics
+want to create beta diversity change metrics.
 
 Adding multiple time steps with no change will require users to create new objects
-for each time step in the above scripts and ignoring the "d_" object codes.
+for each time step in the above scripts and ignoring the "d_" object codes. Users
+should use the existing code as a guide.
 
 Adding multiple time steps with change between each will require heavy modification
 of the ``11_tax_beta_null_model_prep.R``` and ```12_beta_null_model_prep.R``` 
