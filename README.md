@@ -117,31 +117,59 @@ of other diversity metrics of interest.
 <table>
   <thead>
     <tr>
-      <th rowspan="2">Product</th>
-      <th colspan="2">Q1 Performance</th>
-      <th colspan="2">Q2 Performance</th>
+      <th rowspan="2">Diversity Facet</th>
+      <th colspan="3">Native</th>
+      <th colspan="3">Contemporary</th>
+      <th colspan="3">Contemporary - native</th>
     </tr>
     <tr>
-      <th>Sales</th>
-      <th>Revenue</th>
-      <th>Sales</th>
-      <th>Revenue</th>
+      <th>Alpha</th>
+      <th>Beta</th>
+      <th>LCBD</th>
+      <th>Alpha</th>
+      <th>Beta</th>
+      <th>LCBD</th>
+      <th>Alpha</th>
+      <th>Beta</th>
+      <th>LCBD</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Widget A</td>
-      <td>150</td>
-      <td>$1,500</td>
-      <td>180</td>
-      <td>$1,800</td>
+      <td>Taxonomic</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
     </tr>
     <tr>
-      <td>Widget B</td>
-      <td>90</td>
-      <td>$900</td>
-      <td>120</td>
-      <td>$1,200</td>
+      <td>Functional</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+    </tr>
+    <tr>
+      <td>Phylogenetic</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>✓</td>
     </tr>
   </tbody>
 </table>
