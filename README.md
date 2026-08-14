@@ -107,13 +107,6 @@ of other diversity metrics of interest.
 
 ## Workflow end products
 
-
-| Diversity facet | Alpha | Beta | LCBD | Change |
-| --------------- | ----: | ---: | ---: | -----: |
-| Taxonomic       |     — |    ✓ |    ✓ |      ✓ |
-| Functional      |     ✓ |    ✓ |    ✓ |      ✓ |
-| Phylogenetic    |     ✓ |    ✓ |    ✓ |      ✓ |
-
 <table>
   <thead>
     <tr>
@@ -137,13 +130,13 @@ of other diversity metrics of interest.
   <tbody>
     <tr>
       <td>Taxonomic</td>
-      <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
       <td>✓</td>
       <td>✓</td>
     </tr>
@@ -152,10 +145,10 @@ of other diversity metrics of interest.
       <td>✓</td>
       <td>✓</td>
       <td>✓</td>
+      <td>—</td>
       <td>✓</td>
       <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
+      <td>—</td>
       <td>✓</td>
       <td>✓</td>
     </tr>
@@ -164,10 +157,10 @@ of other diversity metrics of interest.
       <td>✓</td>
       <td>✓</td>
       <td>✓</td>
+      <td>—</td>
       <td>✓</td>
       <td>✓</td>
-      <td>✓</td>
-      <td>✓</td>
+      <td>—</td>
       <td>✓</td>
       <td>✓</td>
     </tr>
