@@ -1,27 +1,18 @@
 # Beta diversity change null modelling workflow for high perfomance computor clusters
 
-This repository contains R and Slurm workflow for calculating observed and 
+This repository contains a R and Slurm workflow for calculating observed and 
 null model standardized alpha diversity, beta diversity, and local contribution 
-to beta diversity (LCBD). Standardized effect sizes (SES) are calculated for two species pools 
-(contemporary and native only), that represent current and historical communities,
-as well as for the change in diversity between species pools.
+to beta diversity (LCBD) changes. Workflow estimates values in the taxonomic, 
+functional, and phylogenetic dimensions. This workflow is designed to run using 
+R on local machines  with the more expensive calculations ran using high 
+performance computing clusters via the slurm interface and shell scripts.
 
-This workflow is designed to run using R on local machines with 
-the more expensive calculations ran using high performance computing clusters 
-via the slurm interface and shell scripts.
-
-The workflow was developed for two analyses
-
-The goal of this repository is 1) provide code for these analyses, and
-2) serve as general workflow
-
-
-For detailed methodology and justification see:
+The workflow was developed for two analyses. For detailed methodology and 
+justification see:
 
 [Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
 [BLANK](BLANK)
-
 
 # Citation and contact information
 If you use or adapt this workflow, please cite:
@@ -43,13 +34,21 @@ Email: wannis@fsu.edu, williamkannis@gmail.com
 OrcID: 0009-0003-3541-8503
 ```
 
-This repository serves as a guideline for performing beta diversity change
-null model analyses on HPC clusters. To reproduce the results of the associated
-manuscripts, see the following repositories:
+# Purpose
+The goal of this repository is 1) provide code used in the analyses from the
+associated manuscripts, and 2) serve as general workflow to guide future null
+model analyses
+
+We are not able to directly share the community data form the manuscripts required
+to replicate the manuscript's beta diversity metrics. As such, this repository 
+serves as a guideline for performing beta diversity change null model analyses 
+on HPC clusters. To reproduce the results of the associated
+manuscripts using provided intermediate data, see the following repositories:
 
 [Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
-[Syndromes of multidimensional beta diversity change in invaded metacommunities](BLANK)
+[Invasion syndromes based on changes in multidimensional beta diversity](BLANK)
+
 
 ## Workflow overview
 
@@ -57,7 +56,7 @@ manuscripts, see the following repositories:
                             Input data
                                 │
                                 ▼
-                        00_prepare_inputs.R
+                        Prepare input data
                                 │
                                 ▼
                         Upload to HPC storage
@@ -83,30 +82,37 @@ manuscripts, see the following repositories:
                         Download HPC results
                                 │
                                 ▼
-                          15_ses_comp.R
+                    Summarize null model results
                                 │
                                 ▼
                         Final effect-size data
 ```
-Completing the full workflow will results in observed values and null model 
-standardized effect sizes for taxonomic, functional, and phylogenetic beta 
-diversity/LCBD at two time steps, and change between those time steps. 
-Additionally, functional and phylogenetic alpha diversity at the first time step
-will be calculated in observed and effect size. Users can choose what metrics
-that want to calculate by running only the scripts that correspond to the metrics
-of interest. See table below for script naming codes:
-
-```bash
-tax = taxonomic
-fun = functional
-phy = phylogenetic
-```
-Additionally, users can modify script to incorporate more or less time periods,
-of other diversity metrics of interest.
+The two associated manuscripts used a pseudo-historical approach to examine 
+patterns and drivers of multidimensional beta diversity change. As such it was
+necessary to estimate functional and phylogenetic pairwise beta diversity and LCBD 
+at two species pools representing current (contemporary) and historic 
+(native-only) communities, and estimate the change in diversity between these 
+species pools.
 
 
-## Workflow end products
 
+This workflow also produces an optional null model output for changes in taxonomic 
+diversity and LCBD, using an [algorithm](#taxonomic-beta-diveristy-change) that 
+shuffles that occurrences of nonnative species. This null model does not 
+produce separate null iterations for native
+and contemporary communities, and is only used for change values. The taxonomic
+null model is only suited for pseudo-historical approaches, where as the functional
+and phylogenetic aspects of the workflow can work with true historic data.
+
+Additionally, native functional and phylogenetic alpha and beta diversity were 
+estimated as potential drivers of beta diversity change. Observed diversity 
+values are produced for every diversity metric of interest.
+
+While this workflow is tailored towards the manuscripts' data structure and 
+methodology, we offer recommendations to generalize the workflow [here]()
+
+
+### Workflow null model end products
 <table>
   <thead>
     <tr>
@@ -167,6 +173,8 @@ of other diversity metrics of interest.
   </tbody>
 </table>
 
+
+
 See [Output data structure](#output-data-strucutre) for more information on
 data products.
 
@@ -177,6 +185,18 @@ GENERAL NULL MODEL ALGORITHMS
 
 MENTION THAT THIS FOCUSED ON PUEDO HISTORICAL APPROACHES WITH TWO SPECIES POOL
 MAKE MORE GENERAL FUNCTIONS TO HANDLE OTHER TYPES
+
+Users can choose what metrics
+that want to calculate by running only the scripts that correspond to the metrics
+of interest. See table below for script naming codes:
+
+```bash
+tax = taxonomic
+fun = functional
+phy = phylogenetic
+```
+Additionally, users can modify script to incorporate more or less time periods,
+of other diversity metrics of interest.
 
 ## Required Software
 **R version**: 4.5.0
@@ -195,7 +215,6 @@ R packages
 * ```'purrr'``` version: 1.1.0
 * ```'tibble'``` version: 3.2.1
 * ```'VGAM'```  version: 1.1.14
-
 
 
 ## Input data
@@ -245,7 +264,7 @@ The remaining directories will populate with data throughout the workflow.
 
 ## Workflow
 
-Scripts needing to be ran by the use can be found in ```hpc/scripts``` 
+Scripts needing to be ran by the user can be found in ```hpc/scripts``` 
 directory and are number based on order of workflow. Scripts found
 in ```hpc/scripts_do_not_run``` are either scripts ran on the HPC cluster using 
 shell scripts, or contain functions used by other scripts. **DO NOT** directly run 
