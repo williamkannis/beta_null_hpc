@@ -1,4 +1,4 @@
-# Beta diversity change null modelling workflow for high perfomance computor clusters
+# Beta diversity change null modelling workflow for high performance computer (HPC) clusters
 
 # Anonymous peer review version
 
