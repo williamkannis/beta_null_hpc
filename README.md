@@ -1,5 +1,7 @@
 # Beta diversity change null modelling workflow for high perfomance computor clusters
 
+# Anonymous peer review version
+
 This repository contains a R and Slurm workflow for calculating observed and 
 null model standardized alpha diversity, beta diversity, and local contribution 
 to beta diversity (LCBD) changes. Workflow estimates values in the taxonomic, 
@@ -15,16 +17,18 @@ The workflow was developed for the two following analyses:
 
 [Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
-[BLANK](BLANK)
+[Invasion syndromes based on shared changes in multidimensional beta diversity](BLANK)
 
 Refer to these studies for detailed methodology and justification.
 
 # Citation and contact information
 If you use or adapt this workflow, please cite:
 
-[Manuscript citation]
+BLANK. Null models reveal differing drivers of multidimensional beta diversity 
+change in invaded metacommunities. in review
 
-[Manuscript citation]
+BLANK. Invasion syndromes based on shared changes in multidimensional beta diversity.
+in review
 
 [Workflow citation / DOI]
 
@@ -52,7 +56,7 @@ manuscripts using provided intermediate data, see the following repositories:
 
 [Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
-[Invasion syndromes based on changes in multidimensional beta diversity](BLANK)
+[Invasion syndromes based on shared changes in multidimensional beta diversity](BLANK)
 
 
 ## Workflow overview
@@ -463,7 +467,7 @@ standardized effect sizes.
 All files contains a list with the following structure:
 
 * ```$obs```: observed diversity values of that metric and pool
-* ```$null_list: list of null iterations
+* ```$null_list```: list of null iterations
    
 ### Summarized null model outputs 
 **Directory:**```HPC/ses_output```
