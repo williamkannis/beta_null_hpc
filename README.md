@@ -3,9 +3,13 @@
 This repository contains a R and Slurm workflow for calculating observed and 
 null model standardized alpha diversity, beta diversity, and local contribution 
 to beta diversity (LCBD) changes. Workflow estimates values in the taxonomic, 
-functional, and phylogenetic dimensions. This workflow is designed to run using 
+functional, and phylogenetic dimensions.
+
+Estimating multiple null iterations of multidimensional diversity is 
+computationally demanding and can have large wall times, this is especially the 
+case with beta diversity. As such, This workflow is designed to run using 
 R on local machines  with the more expensive calculations ran using high 
-performance computing clusters via the slurm interface and shell scripts.
+performance computing (HPC) clusters via the slurm interface and shell scripts.
 
 The workflow was developed for the two following analyses:
 
@@ -89,7 +93,7 @@ manuscripts using provided intermediate data, see the following repositories:
                         Final effect-size data
 ```
 This workflow estimates observed and null model effect sizes of multidimensional
-alpha, beta, and LCBD diversity, Users prepare 
+alpha, beta, and LCBD diversity. Users prepare 
 [diversity input data](#input-data) on their local machine and run the 
 observed and null iteration calculations on HPC clusters. Observed and null
 iterations are used to calculated standardized effect sizes on the HPC cluster.
@@ -255,7 +259,8 @@ Scripts needing to be ran by the user can be found in ```hpc/scripts```
 directory and are number based on order of workflow. Scripts found
 in ```hpc/scripts_do_not_run``` are either scripts ran on the HPC cluster using 
 shell scripts, or contain functions used by other scripts. **DO NOT** directly run 
-scripts in ```hpc/scripts_do_not_run```.
+scripts in ```hpc/scripts_do_not_run```. See [here](#generalizing-this-workflow) 
+for tips on generalizing workflow to other data.
 
 
 ### 1. Prepare input data
@@ -273,7 +278,7 @@ random iterations to run on multiple PC nodes simultaneously. Each chunk
 is ran on one node, with parallel processing occurring within node. Workflow
 contains the number of chunks and computational resources used in the associated
 manuscripts. For more information on HPC resources and recommended data chunking
-for general use of the workflow, see [HPC resources](#hpc-resources) section.
+for general use of the workflow, see [HPC resources](#1-hpc-resources) section.
 
 <ins>Outputs:</ins> Lists of input data for each metric and processing chunk.
 For all metrics but taxonomic, list contains community and 
@@ -617,74 +622,30 @@ effect sizes rather than z-score based SES. See
 information on selecting SES or p-value based ES.
 
 ## Generalizing this workflow
-The diversity output data structure and most of the workflow will remain the 
-same for most use cases. There are certain cases that will result in changes to the 
-workflow: 
+The workflow as provided is designed to produce the beta diversity metrics used 
+in the two associated manuscripts, but offer an overall general framework. User
+will understandably need to make some adjustments to the workflow to match their
+data and goals. The diversity output data structure and most of the workflow 
+will remain the same for most use cases. However, regardless of choices, there 
+are certain cases that will result in changes to the workflow:
 
-Below, we outline how users will need to adapt workflow to accommodate  these changes
+1. Users using this workflow with their own data, regardless of structure, 
+will likely require different HPC resources (e.g. nodes, cores, memory).
+2. Users may wish to use different null model algorithms.
+3. Users may wish to only a subset of the possible diversity metrics
+4. Users may either want to use a single time step, not estimate change, or use
+more than 2 time steps.
 
-### 4. HPC resources
+Below, we outline how users will need to adapt workflow to accommodate these 
+changes
 
-### 1. Null model algorithms choices
-The current workflow is limited in null model [algorithms](#null-model-methods) 
-to those used in the associated manuscripts. While these algorithms fit many
-broad cases such as functional and phylogenetic beta diversity, there are some
-limitations with the alpha diversity and taxonomic beta diversity null models.
-For example, users measuring taxonomic beta diversity change with true 
-historical data could benefit from an independent swap algorithm. Users should 
-research the best null  model algorithm for their usage and modify ```00_null_input_creation.R``` 
-and ```null_model_algorithms.R``` accordingly. Future releases will contain more
-null model algorithms.
+### 1. HPC resources
+Estimating multiple null iterations of multidimensional diversity is 
+computationally demanding and can have large wall times, this is especially the 
+case with beta diversity. To reduce this wall time, our workflow runs multiple 
+null iterations simultaneously within and among HPC nodes.
 
-### 2. Diveristy output choices
-The current workflow estimates taxonomic, functional, and phylogenetic alpha,
-diversity, beta diversity, and LCBD. If users only want to measure certain
-dimensions (e.g., phylogenetic only), or a certain metric (e.g., no alpha
-diversity), then users should ignore the corresponding sections 
-of ```00_null_input_creation.R``` that produce input data for metrics not of 
-interest.
-
-Additionally, users should only run the shell scripts in ```HPC/scripts``` that
-correspond to the dimensions and metrics of interest. See table below for script 
-naming codes:
-
-```bash
-tax = taxonomic
-fun = functional
-phy = phylogenetic
-
-obs = observed
-null = null iterations
-```
-
-Finally, users will need to adjust ```#SBATCH --array=1-26``` 
-in ```HPC/scripts/14_ses_batch.sh``` to reflect the number of diveristy
-metrics in ```HPC/ses_inputs```.
-
-### 3. Species pools and change
-
-
-
-
-
-
-
-
-
-
-
-
-### HPC resources
-<ins>TIP:</ins>Users can change the number of null iterations created by 
-modifying the following code: ```max_iter  <- 999```.
-
-<ins>TIP:</ins> Set number of nodes based on number of chunks for each diversity 
-metric. e.g., 1000 chunks = ```#SBATCH --array=1-1000```. 
-
-
-
-
-Input data are prepared in chunks of random iterations to run on multiple PC nodes
+Input data are prepared in chunks of random iterations to run on multiple HPC nodes
 simultaneously, with each chunk being ran on one node. Each node will be able
 to run multiple null model iterations simultaneously across a user specified
 amount of cores. By separating iterations across nodes, users can use more 
@@ -719,11 +680,10 @@ n_groups_p <- 3    # phylogenetic
 ```
 
 Users will then need to alter the shell scripts in the 
-[observed](#) 
+[observed](#3-calculate-observed-diversity-values) 
 and [null iteration](#4-calculate-null-diversity-values) 
-workflow steps to reflect
-the number of chunks, requrired memory, and number cores, and wall time for 
-each metric. See below for an example:
+workflow steps to reflect the number of chunks, required memory, number cores, 
+and wall time for each metric. See below for an example:
 
 ```bash
 # Process 6 chunks using 6 HPC nodes 
@@ -738,15 +698,6 @@ each metric. See below for an example:
 # 6 hours of walltime
 #SBATCH --time=6:00:00
 ```
-
-
-We provide shell scripts with recommended Slurm arguments, but these may need to 
-be altered based on the computational requirements of the user's data.
-
-
-Set memory to minimum value that allows
-job to run. For example: ```#SBATCH --mem=18gb```
-
 <ins>TIP:</ins> We recommend that users experiment with memory and CPU 
 requirements with smaller number of null iterations before running full job.
 
@@ -754,3 +705,56 @@ requirements with smaller number of null iterations before running full job.
 each chunk, as this will waste resources. For example, if 2 iterations per chunk,
 the maximum allowable number of cores is ```SBATCH --cpus-per-task=2 ```.
 
+### 2. Null model algorithms choices
+The current workflow is limited in null model [algorithms](#null-model-methods) 
+to those used in the associated manuscripts. While these algorithms fit many
+broad cases such as functional and phylogenetic beta diversity, there are some
+limitations with the alpha diversity and taxonomic beta diversity null models.
+For example, users measuring taxonomic beta diversity change with true 
+historical data could benefit from an independent swap algorithm. Users should 
+research the best null  model algorithm for their usage and modify ```00_null_input_creation.R``` 
+and ```null_model_algorithms.R``` accordingly. Future releases will contain more
+null model algorithms.
+
+### 2. Diveristy output choices
+The current workflow estimates taxonomic, functional, and phylogenetic alpha,
+diversity, beta diversity, and LCBD. If users only want to measure certain
+dimensions (e.g., phylogenetic only), or a certain metric (e.g., no alpha
+diversity), then users should ignore the corresponding sections 
+of ```00_null_input_creation.R``` that produce input data for metrics not of 
+interest.
+
+Additionally, users should only run the shell scripts in ```HPC/scripts``` that
+correspond to the dimensions and metrics of interest. See table below for script 
+naming codes:
+
+```bash
+tax = taxonomic
+fun = functional
+phy = phylogenetic
+
+obs = observed
+null = null iterations
+```
+
+Finally, users will need to adjust ```#SBATCH --array=1-26``` 
+in ```14_ses_batch.sh``` to reflect the number of diveristy
+metrics in ```HPC/ses_inputs```.
+
+### 3. Species pools and change
+This workflow can easily accommodate single time steps of diversity, or to 
+not estimate beta diversity change. This will only require the modification
+of ```00_null_input_creation.R```, and ```11_tax_beta_null_model_prep.R``` 
+or ```12_beta_null_model_prep.R``` scripts
+
+Users wanting only to estimate one time step should ignore all code in the above 
+scripts that creates objects prefixed by "his_" (native pool). Additionally,
+users should avoid code that creates objects prefixed by "d_" if they do not
+want to create beta diversity change metrics
+
+Adding multiple time steps with no change will require users to create new objects
+for each time step in the above scripts and ignoring the "d_" object codes.
+
+Adding multiple time steps with change between each will require heavy modification
+of the ``11_tax_beta_null_model_prep.R``` and ```12_beta_null_model_prep.R``` 
+scripts to include functions to estimate multiple change comparisons.
