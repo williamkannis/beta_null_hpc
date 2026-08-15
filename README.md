@@ -703,6 +703,13 @@ and wall time for each metric. See below for an example:
 # 6 hours of walltime
 #SBATCH --time=6:00:00
 ```
+
+Also ensure that the ```cores =  ``` argument in the 
+[null iteration](#4-calculate-null-diversity-values) <ins>R scripts </ins>
+reflect the ```#SBATCH --cpus-per-task=  ``` argument in the 
+corresponding <ins>shell script</ins>.
+
+
 <ins>TIP:</ins> We recommend that users experiment with memory and CPU 
 requirements with smaller number of null iterations before running full job.
 
