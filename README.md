@@ -195,6 +195,7 @@ See [Output data structure](#output-data-strucutre) for more information on
 data products.
 
 ## Required Software
+
 **R version**: 4.5.0
 
 R packages
@@ -211,6 +212,18 @@ R packages
 * ```'purrr'``` version: 1.1.0
 * ```'tibble'``` version: 3.2.1
 * ```'VGAM'```  version: 1.1.14
+
+**HPC cluster**: multiple Linux systems in a cluster environment with Slurm
+Workload Manager interface.
+
+Modules:
+
+* anaconda3/2023.09-0
+* r/4.4.0
+* gdal/3.8.3
+* geos/3.12.1
+* proj/9.2.1
+* load sqlite/3.43.2
 
 
 ## Input data
