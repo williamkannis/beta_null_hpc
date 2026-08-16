@@ -29,3 +29,18 @@
 
 .tax_alpha <-function(...) BAT::alpha(...)
 .tax_beta <-function(...) BAT::beta(...)
+
+# Reorder community and trait matrices to match
+## REQUIRE MOST UPTODATE BAT PACKAGE, CHECK THAT BUG
+# IS FIXED, THEN REOVE THIS HELPER
+.trait_match <- function(comm,trait){
+  sp <- colnames(comm)[order(colnames(comm))]
+  com_match <- comm[,sp]
+  trait_match <- trait[sp,]
+  
+  stopifnot(
+    "Species in com do not match species in trait" = 
+    all(colnames(com_match) == row.names(trait_match)))
+  
+  list(com_match,trait_match)
+}
