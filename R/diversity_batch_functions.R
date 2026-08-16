@@ -132,7 +132,7 @@ kernel_alpha_batch <- function(com,trait_hyp,cores =1, abund = F){
 # helper functions  ------------------------------------------------------------
 
 # Batch convert LCBD output to dataframe
-lcbd_batch <- function(D,dim,name) {
+.lcbd_batch <- function(D,name) {
   
   # check if euclidean
   sqrt <- ifelse(ade4::is.euclid(D) == T, F, T)
@@ -141,9 +141,8 @@ lcbd_batch <- function(D,dim,name) {
   lcbd <- adespatial::LCBD.comp(D,sqrt.D = sqrt)$LCBD
   
   # Create output dataframe
-  lcbd_colname <- paste0(dim,"_",name)
   out <- data.frame(COMID = labels(D))
-  out[,lcbd_colname] <- lcbd
+  out[,name] <- lcbd
   row.names(out) <- out$COMID
   out
 }
