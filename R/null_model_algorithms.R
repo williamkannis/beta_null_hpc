@@ -262,17 +262,10 @@ inv_swap <- function(mod_com,his_com,region_bridge,const = "reg.all") {
 }
 
 
-#' Functional trait taxa-swap null model algorithm
-#' 
-#' @description Random shuffles species labels within a functional trait matrix
-#' 
-#' @param trait matrix with columns for functional traits, and rows for species
-#'
-#' @returns randomly shuffled trait matrix with identical labels and 
-#' dimensions to input matrix
-#'
 
-trait_swap <- function(trait) {
+
+# Unconstrained taxa swap helpers
+.comm_swap <-function(comm) {
   sp <- row.names(trait)
   n_sp <- length(sp)
   sp_null <-sample(sp,n_sp)
@@ -280,17 +273,15 @@ trait_swap <- function(trait) {
   trait[order(sp_null),]
 }
 
+.trait_swap <- function(trait) {
+  sp <- row.names(trait)
+  n_sp <- length(sp)
+  sp_null <-sample(sp,n_sp)
+  row.names(trait) <- sp_null
+  trait[order(sp_null),]
+}
 
-#' Phylogenetic tree taxa-swap null model algorithm
-#' 
-#' @description Random shuffles species labels within a phylognetic tree
-#' 
-#' @param tree phylogenetic tree
-#'
-#' @returns phylogenetic tree with randomized tip labes
-#'
-
-tree_swap <- function(tree) {
+.tree_swap <- function(tree) {
   sp <- tree$tip.label
   n_sp <- length(sp)
   sp_null <-sample(sp,n_sp)
