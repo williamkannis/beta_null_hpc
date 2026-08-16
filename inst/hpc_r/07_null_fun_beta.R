@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 #
-#  Functional beta diversity null models cluster code
+#  Batch diveristy HPC script
 #
 #-------------------------------------------------------------------------------
 
@@ -8,9 +8,8 @@
 
 # Created: 02/14/2026
 
-# Description: Batch estimates functional beta diversity and LCBD for a list of
-# null model assemblages and exports files to directory. For use on HPC cluster
-
+# Description: Batch estimates observed or null iterations of user specified
+# diversity metrics
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -24,15 +23,13 @@ library(adespatial)
 library(ade4)
 library(parallel)
 
-# Directories
-out_dir <- "HPC/null_out"
 
-# Load costume functions
+# Load custom functions
 source("HPC/scripts_do_not_run/diversity_batch_functions.R")
 
-# Input data
-cores <- 2
-args <- commandArgs(trailingOnly = TRUE)
+# data
+input <- readRDS()
+type <- commandArgs(trailingOnly = TRUE)
 input_list <- readRDS(args)
 com <- input_list$com
 trait_list <- input_list$trait_list
@@ -49,14 +46,39 @@ max_iter <- iter[as.numeric(iter) == max(as.numeric(iter))]
 # Run beta function
 out_list <- mclapply(trait_list,kernel_beta_batch,com = com, mc.cores = cores)
 
-# Check for scheduled core issue, do not export results if it exists
-export_results <-all(sapply(out_list, function (x) length(x) == 2))
 
-# Export outputs
-if(export_results) {
-  out_name <- paste0(time,"_fun_beta_null_",min_iter,"-",max_iter,".rds")
-  saveRDS(out_list,file.path(out_dir,out_name))
-} else {
-  print("some scheduled cores did return values. all jobs affected")
+# Export outputs ---------------------------------------------------------------
+
+# Export naming
+dir <- input$dir
+if (type == "obs") {
+  out_dir <- file.path(dir,"obs_out")
+  out_name <- paste0(facet,"_",metric,"_obs.rds")
 }
+if (type == "null") {
+  node_num
+  min_iter <- (node_num-1)*input$null_iter+1
+  max_iter <- min_iter + input$null_iter -1
+  out_dir <- file.path(dir,"null_out")
+  out_name <- paste0(facet,"_",metric,"_null_",min_iter,"-",max_iter,".rds")
+}
+saveRDS(out_list,file.path(out_dir,out_name))
 
+
+# # NEED TO THINK ABOUT CHANGE VERSION
+# time <- input_list$time
+# out_name <- paste0(time,"_fun_beta_null_",min_iter,"-",max_iter,".rds")
+# 
+# # DO YOU STILL WANT THIS CHECK?
+# # Check for scheduled core issue, do not export results if it exists
+# export_results <-all(sapply(out_list, function (x) length(x) == 2))
+# 
+# # Export naming
+# # Export outputs
+# if(export_results) {
+#   out_name <- paste0(time,"_fun_beta_null_",min_iter,"-",max_iter,".rds")
+#   saveRDS(out_list,file.path(out_dir,out_name))
+# } else {
+#   print("some scheduled cores did return values. all jobs affected")
+# }
+# 
