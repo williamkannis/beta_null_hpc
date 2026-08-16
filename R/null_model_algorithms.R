@@ -1,5 +1,9 @@
 # null algorithm helper functions
-.comm_algorithm <- function(comm, algorithm) {
+.comm_algorithm <- function(
+    comm, 
+    algorithm= c("frequency", "richness", "independentswap", 
+                 "trialswap","taxa.labels")
+    ) {
   picante_list <- eval(formals(picante::randomizeMatrix)$null.model)
   all_list <- c(picante_list,"taxa.labels")
   ## NEED A WARNING THOWN SOME WHERE FOR THIS TO STOP IF UNACCEPTABLE CHOICE IS
