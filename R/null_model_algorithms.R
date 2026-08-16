@@ -1,15 +1,4 @@
-#' Regional constrained taxa-swap null model algorithm
-#' 
-#' @description Random shuffles species labels in community matrix, constraining
-#' swaps to some defined regional species pool (HUC_2)
-#' 
-#' @param com Community matrix with columns for species and rows for site
-#' @param region_bridge  data.frame with column COMID that matches row names
-#' of com, and HUC_2 which define that site's region.
-#'
-#' @returns randomly shuffled community matrix with identical labels and 
-#' dimensions to input matrix
-#' 
+# Regional constrained taxa-swap null model algorithm
 # NEED TO GENERALIZE THIS
 .taxa_swap_region <- function(com,region_bridge) {
   
