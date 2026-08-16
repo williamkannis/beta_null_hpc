@@ -43,29 +43,38 @@
 
 
 # Unconstrained taxa swap helpers  ---------------------------------------------
-.comm_swap <-function(comm) {
-  sp <- row.names(trait)
-  n_sp <- length(sp)
-  sp_null <-sample(sp,n_sp)
-  row.names(trait) <- sp_null
-  trait[order(sp_null),]
+.comm_algorithm <- function(comm, algorithm) {
+  picante_list <- eval(formals(picante::randomizeMatrix)$null.model)
+  all_list <- c(picante_list,"taxa.labels")
+  ## NEED A WARNING THOWN SOME WHERE FOR THIS TO STOP IF UNACCEPTABLE CHOICE IS
+  # GIVEN
+  if(algorithm %in% picante_list){
+    null_comm <- picante::randomizeMatrix(comm,algorithm)
+    return(null_comm)
+  }
+  
+  if(algorithm == "taxa.labels") {
+    null_comm <- comm
+    colnames(null_comm) <- colnames(null_comm)[sample(ncol(null_comm))]
+    return(null_comm)
+  }
 }
 
-.trait_swap <- function(trait) {
-  sp <- row.names(trait)
-  n_sp <- length(sp)
-  sp_null <-sample(sp,n_sp)
-  row.names(trait) <- sp_null
-  trait[order(sp_null),]
+.trait_tree_swap(trait = NULL, tree = NULL) {
+  if(!is.null(trait) & !is.null(tree)){
+    stop("please provide either a trait matrix, or a tree. Not both.")
+  }
+  
+  if(!is.null(trait)) {
+    row.names(trait) <- row.names(trait)[sample(nrow(trait))]
+    return(trait)
+  }
+  
+  if(!is.null(tree)){
+    picante::tipShuffle(tree)
+  }
 }
 
-.tree_swap <- function(tree) {
-  sp <- tree$tip.label
-  n_sp <- length(sp)
-  sp_null <-sample(sp,n_sp)
-  tree$tip.label <- sp_null
-  tree
-}
 
 #' # Tax Beta diversity null models  ----------------------------------------------
 #' 
