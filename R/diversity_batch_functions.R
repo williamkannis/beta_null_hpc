@@ -1,4 +1,65 @@
-
+# Null model iteration function  -----------------------------------------------
+null_iterations <- function(
+    type,  # obs or null
+    change = F,
+    label = "",
+    lcbd = NULL, # T or F
+    beta_comps = NULL,  # all or vector of components matching BAT naming
+    fun,  
+    fun_args,
+    algorithm = NULL,
+    null.iter = NULL,
+    null.cores = NULL
+){
+  
+  if(!change){
+    if(type == "obs"){
+      obs <- .div_fun(
+        label = label,
+        lcbd = lcbd,
+        beta_comps = beta_comps,
+        fun = fun,
+        fun_args = fun_args)
+      return(obs)
+    }
+    
+    if (type == "null"){
+      
+      # Set up null algorithm options
+      args <- list(...)
+      alg_input <- args[names(args) %in% c("comm","trait","tree")]
+      alg_input <- c(alg_input,list(algorithm=algorithm))
+      
+      # estimate null iterations across processing cores
+      null_iters <- parallel::mclapply(
+        X = 1:null.iter,
+        mc.cores = null.cores,
+        FUN = function(i) {
+          
+          # Create null iteration
+          null_input <- do.call(.null_algorithm,alg_input)
+          null_args <- c(
+            null_input,
+            args[!names(args) %in% c("comm","trait","tree")]
+          )
+          
+          # Estimate diversity
+          .div_fun(
+            label = label,
+            lcbd = lcbd,
+            beta_comps = beta_comps,
+            fun = fun,
+            fun_args = null_args
+          )
+        }
+      )
+    }
+    return(null_iters)
+  }
+  # if(change){
+  #   
+  # }
+}
 
 
 # Helper functions  ------------------------------------------------------------
