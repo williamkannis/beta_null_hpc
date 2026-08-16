@@ -1,6 +1,8 @@
 # Wrappers to easily call BAT functions
+
 # FOR TESTING - TEST THAT VALUES EQUAL NON WRAPPER OUTPUTS
 # AND THAT FUNCTIONS TAKE THE ARGUMENTS CORRECTLY
+
 .kernel_alpha <- function(...){
   args <- list(...)
   kernel <- BAT::kernel.build(...)

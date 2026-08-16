@@ -10,8 +10,8 @@
 #' @returns randomly shuffled community matrix with identical labels and 
 #' dimensions to input matrix
 #' 
-
-taxa_swap_region <- function(com,region_bridge) {
+# NEED TO GENERALIZE THIS
+.taxa_swap_region <- function(com,region_bridge) {
   
   # All species list
   sp <- colnames(com)[order(colnames(com))]
