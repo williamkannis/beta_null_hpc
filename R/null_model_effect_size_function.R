@@ -1,14 +1,3 @@
-#-------------------------------------------------------------------------------
-#
-#   Null model standardized effect size and diagnostic function
-#
-#-------------------------------------------------------------------------------
-
-# Author: William
-
-# Created: 03/16/2026
-
-
 #' Null model standardized effect size and diagnostic function
 #' 
 #' @description Estimates null model standardized effects sizes and returns

@@ -1,17 +1,3 @@
-#-------------------------------------------------------------------------------
-#
-#   Diversity batch functions
-#
-#-------------------------------------------------------------------------------
-
-# Author: William K. Annis
-
-# Created: 03/16/2026
-
-# Description: Functions to batch estimate functional and phylogenetic diversity
-# metrics for the use in null models.
-
-
 # Beta functions  --------------------------------------------------------------
 #' Batch estimate kernel density based  functional beta diversity and lcbd
 #' 

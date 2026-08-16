@@ -1,18 +1,3 @@
-#------------------------------------------------------------------------------
-#
-#  Null model algorithm functions
-#
-#------------------------------------------------------------------------------
-
-# Author: William K. Annis
-
-# Created: 2-13-2025
-
-# Description: A set of functions to randomize community, trait, or phylogenetic
-# data for null model creation
-
-# Alpha diversity null models --------------------------------------------------
-
 #' Regional constrained taxa-swap null model algorithm
 #' 
 #' @description Random shuffles species labels in community matrix, constraining
