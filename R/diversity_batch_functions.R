@@ -2,16 +2,16 @@
 null_iterations <- function(
     type,  # obs or null
     change = F,
-    label = "",
+    label,
     lcbd = NULL, # T or F
     beta_comps = NULL,  # all or vector of components matching BAT naming
     fun,  
     fun_args,
-    algorithm = NULL,
+    algorithm = c("taxa.labels","frequency", "richness","independentswap", "trialswap"),
     null.iter = NULL,
     null.cores = NULL
 ){
-  
+  algorithm <- match.arg(algorithm)
   if(!change){
     if(type == "obs"){
       obs <- .div_fun(
@@ -25,23 +25,15 @@ null_iterations <- function(
     
     if (type == "null"){
       
-      # Set up null algorithm options
-      args <- list(...)
-      alg_input <- args[names(args) %in% c("comm","trait","tree")]
-      alg_input <- c(alg_input,list(algorithm=algorithm))
-      
       # estimate null iterations across processing cores
       null_iters <- parallel::mclapply(
         X = 1:null.iter,
         mc.cores = null.cores,
         FUN = function(i) {
           
-          # Create null iteration
-          null_input <- do.call(.null_algorithm,alg_input)
-          null_args <- c(
-            null_input,
-            args[!names(args) %in% c("comm","trait","tree")]
-          )
+          # apply null model algorithm to community matrix
+          null_args <- fun_args
+          null_args$comm <- .comm_algorithm(null_args$comm,algorithm)
           
           # Estimate diversity
           .div_fun(
@@ -56,14 +48,21 @@ null_iterations <- function(
     }
     return(null_iters)
   }
-  # if(change){
-  #   
-  # }
-}
+#   if(change){
+#     null_args <- fun_args
+#     null_name <- names(null_args)[names(null_args) %in% c("trait","tree")]
+#     # null_input <- c(
+#     #   null_args[null_name],
+#     #   list(algorithm = algorithm)
+#     #   )
+#     # null_args[[null_name]] <- do.call(.trait_tree_swap,null_input
+#     null_args[[null_name]] <- do.call(.trait_tree_swap,null_args[null_name])
+#   }
+ }
 
 
 # Helper functions  ------------------------------------------------------------
-
+### BUG WHEN ONE BETA COMPONET IS CHOOSEN
 # estimate diversity using function of choice
 .div_fun <- function(label = NULL,lcbd,beta_comps,fun,fun_args) {
   
@@ -90,7 +89,10 @@ null_iterations <- function(
     
     # Create data frame with LCBD of all components
     lcbd <- purrr::map2(beta,names(beta),.lcbd_batch) %>% 
-      purrr::reduce(left_join,by = join_by(COMID)) %>% 
+      purrr::reduce(
+        dplyr::left_join,
+        by = dplyr::join_by(COMID)
+        ) %>% 
       tibble::column_to_rownames("COMID")
     
     return(list(beta = beta,lcbd = lcbd))
