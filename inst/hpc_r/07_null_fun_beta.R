@@ -9,7 +9,8 @@
 # Created: 02/14/2026
 
 # Description: Batch estimates observed or null iterations of user specified
-# diversity metrics
+# diversity metrics. Observed or null outputs are choosen based on shell script
+# argument.
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
@@ -41,10 +42,10 @@ min_iter <- iter[as.numeric(iter) == min(as.numeric(iter))]
 max_iter <- iter[as.numeric(iter) == max(as.numeric(iter))]
 
 
-# Null model batch processing --------------------------------------------------
+# Estimate diversity  ----------------------------------------------------------
 
 # Run beta function
-out_list <- mclapply(trait_list,kernel_beta_batch,com = com, mc.cores = cores)
+out_list <- null_iterations()
 
 
 # Export outputs ---------------------------------------------------------------
