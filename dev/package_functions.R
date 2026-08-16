@@ -1,8 +1,45 @@
-comm <- readRDS("Diversity Input Data/mod_com_diversity_input.rds")[1:10,-1]
-trait <- readRDS("Diversity Input Data/trait_diversity_input.rds")
+comm <- readRDS("dev/mod_com_diversity_input.rds")[1:10,-1]
+trait <- readRDS("dev/trait_diversity_input.rds")
 trait_gower <- BAT::gower(trait)
 trait_hyp <- BAT::hyper.build(trait_gower,axes = 4)  # reduce using pcoa 
-tree <- readRDS("Diversity Input Data/phylo_tree.rds")
+tree <- readRDS("dev/phylo_tree.rds")
+
+# Algo development  ------------------------------------------------------------
+algorithm <- "frequency"
+.comm_algorithm <- function(comm, algorithm) {
+  picante_list <- eval(formals(picante::randomizeMatrix)$null.model)
+  all_list <- c(picante_list,"taxa.labels")
+  ## NEED A WARNING THOWN SOME WHERE FOR THIS TO STOP IF UNACCEPTABLE CHOICE IS
+  # GIVEN
+  if(algorithm %in% picante_list){
+    null_comm <- picante::randomizeMatrix(comm,algorithm)
+    return(null_comm)
+  }
+  
+  if(algorithm == "taxa.labels") {
+    null_comm <- comm
+    colnames(null_comm) <- colnames(null_comm)[sample(ncol(null_comm))]
+    return(null_comm)
+  }
+}
+
+.trait_tree_swap(trait = NULL, tree = NULL) {
+  if(!is.null(trait) & !is.null(tree)){
+    stop("please provide either a trait matrix, or a tree. Not both.")
+  }
+  
+  if(!is.null(trait)) {
+    row.names(trait) <- row.names(trait)[sample(nrow(trait))]
+    return(trait)
+  }
+  
+  if(!is.null(tree)){
+    picante::tipShuffle(tree)
+  }
+}
+
+.comm_algorithm(comm,"taxa.labels")
+
 
 # Input lit example  -----------------------------------------------------------
 input <- list(
@@ -182,6 +219,10 @@ fun <- ".dendrogram_beta"
 fun <- ".dendrogram_alpha"
 fun_args <- list(comm = comm,tree=tree,func = "sorenson",abund = F, comp = F)
 fun_args <- list(comm = comm,tree=tree)
+
+a <- null_iterations(type = "null",label = "phy",lcbd =T,
+                beta_comps = c("Btotal","Brepl"),fun = fun,fun_args = fun_args,
+                null.iter = 10,null.cores = 10)
 .div_fun(NULL,T,c("Btotal","Brepl","Brich"),fun,fun_args)
 
 .div_fun("phy",T,c("Btotal","Brepl","Brich"),fun,fun_args)
@@ -267,9 +308,11 @@ args <-c(
   overwrite = F,
   estimate_hpc_args = T,
   hpc_args = NULL,
+  change = F,   # T or F. estiamte change between two time steps. keep for later release
   method = "",  # taxonomic, dendrogram, hull, or kernel
   metric = "",  # alpha or beta
-  dim = "",  # could be tax, fun, phy, or anythin users specifes. used for file and column naming (MAYBE CALL LABEL?)
+  label = "",  # could be tax, fun, phy, or anythin users specifes. used for file and column naming 
+  algorithm = ""  # USE PICANTE NOTATION FOR THESE
   )
 div_shell_builder <- function(
 ){
@@ -299,7 +342,8 @@ div_shell_builder <- function(
   trait_match <- match[[2]]
   
   
-  
+  ###NEED TO HAVE ALL THE WARNINGS OF THE HPC SCRIPTS IN THIS FUNCTION AS WELL
+  # THAT WAY USERS WILL NO THEIR INPUTS ARE INCORRECT
   
   
 }
