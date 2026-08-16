@@ -1,7 +1,4 @@
-
-
-
-# Unconstrained taxa swap helpers  ---------------------------------------------
+# null algorithm helper functions
 .comm_algorithm <- function(comm, algorithm) {
   picante_list <- eval(formals(picante::randomizeMatrix)$null.model)
   all_list <- c(picante_list,"taxa.labels")
@@ -19,7 +16,9 @@
   }
 }
 
-.trait_tree_swap(trait = NULL, tree = NULL) {
+# taxa.label but on trait/tree. used for beta diversity change. will use in future
+# updates
+.trait_tree_swap <- function(trait = NULL, tree = NULL) {
   if(!is.null(trait) & !is.null(tree)){
     stop("please provide either a trait matrix, or a tree. Not both.")
   }
