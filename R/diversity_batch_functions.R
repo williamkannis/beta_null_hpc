@@ -8,8 +8,8 @@ null_iterations <- function(
     fun,  
     fun_args,
     algorithm = c("taxa.labels","frequency", "richness","independentswap", "trialswap"),
-    null.iter = NULL,
-    null.cores = NULL
+    null_iter = NULL,
+    null_cores = NULL
 ){
   algorithm <- match.arg(algorithm)
   if(!change){
