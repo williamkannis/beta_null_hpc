@@ -26,9 +26,9 @@ null_iterations <- function(
     if (type == "null"){
       
       # estimate null iterations across processing cores
-      null_iters <- parallel::mclapply(
-        X = 1:null.iter,
-        mc.cores = null.cores,
+      null_out <- parallel::mclapply(
+        X = 1:null_iter,
+        mc.cores = null_cores,
         FUN = function(i) {
           
           # apply null model algorithm to community matrix
@@ -46,7 +46,7 @@ null_iterations <- function(
         }
       )
     }
-    return(null_iters)
+    return(null_out)
   }
 #   if(change){
 #     null_args <- fun_args
