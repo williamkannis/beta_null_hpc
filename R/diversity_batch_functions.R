@@ -88,14 +88,14 @@ null_iterations <- function(
     if (!lcbd) return(beta)
     
     # Create data frame with LCBD of all components
-    lcbd <- purrr::map2(beta,names(beta),.lcbd_batch) %>% 
+    beta$lcbd <- purrr::map2(beta,names(beta),.lcbd_batch) %>% 
       purrr::reduce(
         dplyr::left_join,
         by = dplyr::join_by(COMID)
         ) %>% 
       tibble::column_to_rownames("COMID")
-    
-    return(list(beta = beta,lcbd = lcbd))
+    return(beta)
+    # return(list(beta = beta,lcbd = lcbd))
   }
 }
 
