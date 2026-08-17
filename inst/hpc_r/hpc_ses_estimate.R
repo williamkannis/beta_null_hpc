@@ -21,6 +21,7 @@ rm(list = ls())
 library(purrr)
 
 # Directories
+dir <- commandArgs(trailingOnly = TRUE)
 obs_dir <- file.path(dir,"obs_out")
 null_dir <- file.path(dir,"null_out")
 out_dir <- file.path(dir,"ses_outputs")
