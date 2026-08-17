@@ -80,12 +80,6 @@ div_shell_builder <- function(
       )
   }
   
-  ## NEED TO CHANGE TO FORMALS THAT ARE REQUIRED
-  
-  ## WARNING ABOUT OPTIONAL FUN ARG THAT ARE NOT SPECIED. FOR EXAMPLE WARNING: NO VALUES FOR FUNC SUPPLIED, WILL ESTIMATE JACARD BY DEFUALT
-  
-  # CODE TO MAKE SURE ALL OF FUNCTIONS ARGMENTS ARE MET
-  
   # Estimate resource needs
   hpc_args <- estimate_hpc_resources()
   
