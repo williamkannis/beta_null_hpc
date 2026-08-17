@@ -27,7 +27,7 @@ library(ade4)
 library(parallel)
 
 # data
-input <- readRDS()
+input <- readRDS("hpc_input.rds")
 type <- commandArgs(trailingOnly = TRUE)
 
 
