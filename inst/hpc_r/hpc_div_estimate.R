@@ -55,6 +55,7 @@ if (type == "null") {
   out_dir <- file.path(dir,"null_out")
   out_name <- paste0(facet,"_",metric,"_null_",min_iter,"-",max_iter,".rds")
 }
+dir.create(out_dir,recursive = T)
 saveRDS(out_list,file.path(out_dir,out_name))
 
 # # WILL NEED TO FIGURE THE CHANGE VERSION
