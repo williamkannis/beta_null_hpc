@@ -159,6 +159,8 @@ div_shell_builder <- function(
   # Create function name
   fun_name <- paste0(".",method,metric)
   
+  # Prepare function arguments
+  
   # Estimate resource needs
   hpc_args <- estimate_hpc_resources()
   
@@ -172,6 +174,28 @@ div_shell_builder <- function(
   match <-trait_match(com,trait_hyp)
   com_match <- match[[1]]
   trait_match <- match[[2]]
+  
+  # Prepare hpc input file
+  input <- list(
+    null_iter = 10, # number of iterations per node
+    null_cores = 10, # number of core per node
+    label = "phy",  # tax, fun, phy, for file naming
+    fun = ".dendrogram_beta",  # name of function to call in,
+    fun_args = list(  # arugmenters for diversity function
+      comm = as.matrix(comm),
+      # trait = NULL,
+      tree = tree,
+      func = "sorenson",
+      abund = F,
+      comp = F
+    ),
+    lcbd = T,
+    beta_comps = c("Btotal","Brepl","Brich"),
+    algorithm = "taxa.labels"
+  )
+  
+  
+  saveRDS(input,file.path(dir,"hpc_input.rds"))
   
   
   ###NEED TO HAVE ALL THE WARNINGS OF THE HPC SCRIPTS IN THIS FUNCTION AS WELL
