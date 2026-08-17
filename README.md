@@ -17,7 +17,7 @@ The workflow was developed for the two following analyses:
 
 [Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
-[Invasion syndromes based on shared changes in multidimensional beta diversity](BLANK)
+[Syndromes of multifaceted beta diversity change in invaded metacommunities](BLANK)
 
 Refer to these studies for detailed methodology and justification.
 
@@ -27,7 +27,7 @@ If you use or adapt this workflow, please cite:
 >BLANK. Null models reveal differing drivers of multidimensional beta diversity 
 >change in invaded metacommunities. in review
 
->BLANK. Invasion syndromes based on shared changes in multidimensional beta diversity.
+>BLANK. Syndromes of multifaceted beta diversity change in invaded metacommunities.
 >in review
 
 >BLANK. Beta diversity change null modelling workflow for Slurm-based high 
@@ -57,7 +57,7 @@ manuscripts using provided intermediate data, see the following repositories:
 
 [Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
 
-[Invasion syndromes based on shared changes in multidimensional beta diversity](BLANK)
+[Syndromes of multifaceted beta diversity change in invaded metacommunities](BLANK)
 
 
 ## Workflow overview
