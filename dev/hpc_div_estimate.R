@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 #
-#  Batch diveristy HPC script
+#  Batch diversity HPC script
 #
 #-------------------------------------------------------------------------------
 
@@ -9,13 +9,15 @@
 # Created: 02/14/2026
 
 # Description: Batch estimates observed or null iterations of user specified
-# diversity metrics. Observed or null outputs are choosen based on shell script
+# diversity metrics. Observed or null outputs are chosen based on shell script
 # argument.
 
 # House keeping  ---------------------------------------------------------------
 rm(list = ls())
 
-# Packages
+
+#Packages
+# CAN REMOVE MOST OF THESE, AND JUST CALL IN THIS PACKAGE.
 library(dplyr)
 library(purrr)
 library(tibble)
@@ -24,28 +26,16 @@ library(adespatial)
 library(ade4)
 library(parallel)
 
-
-# Load custom functions
-source("HPC/scripts_do_not_run/diversity_batch_functions.R")
-
 # data
 input <- readRDS()
 type <- commandArgs(trailingOnly = TRUE)
-input_list <- readRDS(args)
-com <- input_list$com
-trait_list <- input_list$trait_list
-
-# Output naming
-time <- input_list$time
-iter <- names(trait_list)
-min_iter <- iter[as.numeric(iter) == min(as.numeric(iter))]
-max_iter <- iter[as.numeric(iter) == max(as.numeric(iter))]
 
 
 # Estimate diversity  ----------------------------------------------------------
 
 # Run beta function
-out_list <- null_iterations()
+input$type <- type
+out_list <- do.call(null_iterations,input)
 
 
 # Export outputs ---------------------------------------------------------------
@@ -57,7 +47,9 @@ if (type == "obs") {
   out_name <- paste0(facet,"_",metric,"_obs.rds")
 }
 if (type == "null") {
-  node_num
+  
+  # files are named by on consecutive iterations across all other nodes
+  node_num <- Sys.getenv("SLURM_ARRAY_TASK_ID")
   min_iter <- (node_num-1)*input$null_iter+1
   max_iter <- min_iter + input$null_iter -1
   out_dir <- file.path(dir,"null_out")
@@ -65,21 +57,5 @@ if (type == "null") {
 }
 saveRDS(out_list,file.path(out_dir,out_name))
 
-
-# # NEED TO THINK ABOUT CHANGE VERSION
+# # WILL NEED TO FIGURE THE CHANGE VERSION
 # time <- input_list$time
-# out_name <- paste0(time,"_fun_beta_null_",min_iter,"-",max_iter,".rds")
-# 
-# # DO YOU STILL WANT THIS CHECK?
-# # Check for scheduled core issue, do not export results if it exists
-# export_results <-all(sapply(out_list, function (x) length(x) == 2))
-# 
-# # Export naming
-# # Export outputs
-# if(export_results) {
-#   out_name <- paste0(time,"_fun_beta_null_",min_iter,"-",max_iter,".rds")
-#   saveRDS(out_list,file.path(out_dir,out_name))
-# } else {
-#   print("some scheduled cores did return values. all jobs affected")
-# }
-# 
