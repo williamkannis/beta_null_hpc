@@ -18,8 +18,7 @@ rm(list = ls())
 
 # Packages
 # LOAD IN CUSTOM PACKAGE
-library(dplyr)
-library(purr)
+library(purrr)
 
 # Directories
 obs_dir <- file.path(dir,"obs_out")
@@ -29,29 +28,22 @@ dir.create(out_dir,recursive = T)
 
 
 # Load in obs and null data ----------------------------------------------------
-
-obs <- readRDS(list.files(obs_dir))
-
-# Combine null processing chunks into one list
+obs_file <- list.files(obs_dir)
 null_files <- list.files(null_dir)
+
+
+obs_input <- readRDS(obs_file)
 null_list <- lapply(
   null_files, 
   function(x) readRDS(file.path(null_dir,x))
 )
-null <- unlist(null_list,recursive = FALSE)
 
+## ADD IN CODE TO LEAVE MESSAGE IF DIRECTORIES HAVE FILES OTHER THAN THOSE NEEDED
+# OR MAKE LIST FILE MORE SPECIFIC
 
-obs_list <- list(Beta = list(Btotal = 1,Brepl = 1),lcbd = 1)
-null_list <- list(obs_list,obs_list,obs_list)
-
-obs_input <- unlist(obs_list,recursive = FALSE)
-
-null_list_t <- purrr::transpose(null_list)
-null_input <- purrr::transpose(null_list_t[[1]])
-## FIX DIV FUNCTION TO MAKE A CLEAN LIST ITH NO NESRING
-if("lcbd" %in% names(null_list_t)) {
-  null_input$lcbd <- null_list_t[[2]]
-}
+# Combine null processing chunks into one list, with metrics outside, iterations
+#inside
+null_input <- purrr::transpose(null_list)
 
 
 # Run SES function and export  -------------------------------------------------
@@ -70,9 +62,11 @@ out_list <- parallel::mclapply(1:length(obs_input), function(i){
 }
 )
 names(out_list) <- names(obs_input)
+out <- purrr::transpose(out_list)
 
 
 # Export -----------------------------------------------------------------------
-out_name <-sub("ses_input","ses_out",input_file)
+
+out_name <-sub("_obs","",obs_file)
 saveRDS(out,file.path(out_dir,out_name))
 
