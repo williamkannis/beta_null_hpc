@@ -4,204 +4,31 @@ trait_gower <- BAT::gower(trait)
 trait_hyp <- BAT::hyper.build(trait_gower,axes = 4)  # reduce using pcoa 
 tree <- readRDS("dev/phylo_tree.rds")
 
-# Algo development  ------------------------------------------------------------
-algorithm <- "frequency"
-.comm_algorithm <- function(comm, algorithm) {
-  picante_list <- eval(formals(picante::randomizeMatrix)$null.model)
-  all_list <- c(picante_list,"taxa.labels")
-  ## NEED A WARNING THOWN SOME WHERE FOR THIS TO STOP IF UNACCEPTABLE CHOICE IS
-  # GIVEN
-  if(algorithm %in% picante_list){
-    null_comm <- picante::randomizeMatrix(comm,algorithm)
-    return(null_comm)
-  }
-  
-  if(algorithm == "taxa.labels") {
-    null_comm <- comm
-    colnames(null_comm) <- colnames(null_comm)[sample(ncol(null_comm))]
-    return(null_comm)
-  }
-}
-
-.trait_tree_swap(trait = NULL, tree = NULL) {
-  if(!is.null(trait) & !is.null(tree)){
-    stop("please provide either a trait matrix, or a tree. Not both.")
-  }
-  
-  if(!is.null(trait)) {
-    row.names(trait) <- row.names(trait)[sample(nrow(trait))]
-    return(trait)
-  }
-  
-  if(!is.null(tree)){
-    picante::tipShuffle(tree)
-  }
-}
-
-.comm_algorithm(comm,"taxa.labels")
 
 
 # Input lit example  -----------------------------------------------------------
 input <- list(
-  null.iter = NULL, # number of iterations per node
-  null.cores = NULL, # number of core per node
-  label = "",  # tax, fun, phy, for file naming
-  fun = "",  # name of function to call in,
-  fun_agrs = list(  # arugmenters for diversity function
-    comm = as.matrix(NULL),
-    trait = as.matrix(NULL),
-    tree = NULL,
-    func = NULL,
-    abund = NULL
+  null_iter = 10, # number of iterations per node
+  null_cores = 10, # number of core per node
+  label = "phy",  # tax, fun, phy, for file naming
+  fun = ".dendrogram_beta",  # name of function to call in,
+  fun_args = list(  # arugmenters for diversity function
+    comm = as.matrix(comm),
+    # trait = NULL,
+    tree = tree,
+    func = "sorenson",
+    abund = F,
+    comp = F
   ),
-  algorithm = ""
+  lcbd = T,
+  beta_comps = c("Btotal","Brepl","Brich"),
+  algorithm = "taxa.labels"
 )
 
-# Null model iteration function  -----------------------------------------------
-null_iterations <- function(
-    type,  # obs or null
-    change = F,
-    label = "",
-    lcbd = NULL, # T or F
-    beta_comps = NULL,  # all or vector of components matching BAT naming
-    fun,  
-    fun_args,
-    algorithm = NULL,
-    null.iter = NULL,
-    null.cores = NULL
-    ){
-  
-  if(!change){
-    if(type == "obs"){
-      obs <- .div_fun(
-        label = label,
-        lcbd = lcbd,
-        beta_comps = beta_comps,
-        fun = fun,
-        fun_args = fun_args)
-      return(obs)
-    }
-    
-    if (type == "null"){
-      
-      # Set up null algorithm options
-      args <- list(...)
-      alg_input <- args[names(args) %in% c("comm","trait","tree")]
-      alg_input <- c(alg_input,list(algorithm=algorithm))
-      
-      # estimate null iterations across processing cores
-      null_iters <- parallel::mclapply(
-        X = 1:null.iter,
-        mc.cores = null.cores,
-        FUN = function(i) {
-          
-          # Create null iteration
-          null_input <- do.call(.null_algorithm,alg_input)
-          null_args <- c(
-            null_input,
-            args[!names(args) %in% c("comm","trait","tree")]
-          )
-          
-          # Estimate diversity
-          .div_fun(
-            label = label,
-            lcbd = lcbd,
-            beta_comps = beta_comps,
-            fun = fun,
-            fun_args = null_args
-            )
-        }
-      )
-    }
-    return(null_iters)
-  }
-  # if(change){
-  #   
-  # }
-}
-# Helper functions  ------------------------------------------------------------
-
-# estimate diversity using function of choice
-.div_fun <- function(label = NULL,lcbd,beta_comps,fun,fun_args) {
-  
-  # Prepare custom labels if provided
-  if(!is.null(label)) label <- paste0(label,"_")
-  
-  # Estimate diversity with specified method
-  helper_fun <- get(fun)
-  div <- do.call(helper_fun,fun_args)
-  
-  # Determine if alpha or beta
-  metric = stringr::str_extract(fun, "(?<=_).*")
-  
-  if(metric == "alpha"){
-    colnames(div) <- lapply(colnames(div),function(i) paste0(label,i))
-    return(div)
-  }
-  
-  # Select components and lcbd for beta diversity
-  if (metric == "beta") {
-    beta <- div[beta_comps]
-    names(beta) <- lapply(names(beta),function(i) paste0(label,i))
-    if (!lcbd) return(beta)
-    
-    # Create data frame with LCBD of all components
-    lcbd <- purrr::map2(beta,names(beta),.lcbd_batch) %>% 
-      purrr::reduce(left_join,by = join_by(COMID)) %>% 
-      tibble::column_to_rownames("COMID")
-    
-    return(list(beta = beta,lcbd = lcbd))
-  }
-}
 
 
-#Estimate LCBD and export as data.frame
-.lcbd_batch <- function(D,name) {
-  
-  # check if euclidean
-  sqrt <- ifelse(ade4::is.euclid(D) == T, F, T)
-  
-  # estimate LCBD
-  lcbd <- adespatial::LCBD.comp(D,sqrt.D = sqrt)$LCBD
-  
-  # Create output dataframe
-  out <- data.frame(COMID = labels(D))
-  out[,name] <- lcbd
-  row.names(out) <- out$COMID
-  out
-}
 
-# Wrappers to easily call BAT functions
-# FOR TESTING - TEST THAT VALUES EQUAL NON WRAPPER OUTPUTS
-# AND THAT FUNCTIONS TAKE THE ARGUMENTS CORRECTLY
-.kernel_alpha <- function(...){
-  args <- list(...)
-  kernel <- BAT::kernel.build(...)
-  BAT::kernel.alpha(kernel)
-}
-.kernel_beta<- function(...){
-  args <- list(...)
-  kern_args <- args[names(args) != "func"]
-  kernel <- do.call(BAT::kernel.build,kern_args)
-  BAT::kernel.beta(kernel,func = args$func)
-}
 
-.hull_alpha <- function(...){
-  hull <- BAT::hull.build(...)
-  BAT::hull.alpha(hull)
-}
-.hull_beta <- function(...){
-  args <- list(...)
-  hull_args <- args[names(args) != "func"]
-  hull <- do.call(BAT::hull.build,hull_args)
-  BAT::hull.beta(hull,func = args$func)
-}
-
-.dendrogram_alpha <- function(...) BAT::alpha(...)
-.dendrogram_beta <- function(...) BAT::beta(...)
-
-.tax_alpha <-function(...) BAT::alpha(...)
-.tax_beta <-function(...) BAT::beta(...)
 
 #function testins
 
@@ -227,11 +54,14 @@ a <- null_iterations(type = "null",label = "phy",lcbd =T,
 
 .div_fun("phy",T,c("Btotal","Brepl","Brich"),fun,fun_args)
 
+
 # HPC script building  ---------------------------------------------------------
 
 
 ## WILL NEED ASCRIPT TO LOAD IN MODULES version numbers may cause problems
 # SCRIPT TO INSTALL R PACKAGES ON CLUSTER
+
+## WILL NEED INTIAL SCRIPT TO INSTALL ALL REQUIRED PACKAGE
 
 #Function to estimate resources needed
 estimate_hpc_resources <- function(){
