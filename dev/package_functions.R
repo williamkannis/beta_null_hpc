@@ -49,7 +49,9 @@ fun_args <- list(comm = comm,tree=tree)
 
 a <- null_iterations(type = "null",label = "phy",lcbd =T,
                 beta_comps = c("Btotal","Brepl"),fun = fun,fun_args = fun_args,
-                null.iter = 10,null.cores = 10)
+                null_iter = 10,null_cores = 10)
+purrr::transpose(a)
+
 .div_fun(NULL,T,c("Btotal","Brepl","Brich"),fun,fun_args)
 
 .div_fun("phy",T,c("Btotal","Brepl","Brich"),fun,fun_args)
