@@ -41,7 +41,7 @@ out_list <- do.call(null_iterations,input)
 # Export outputs ---------------------------------------------------------------
 
 # Export naming
-dir <- input$dir
+dir <- input$dir  ## MAYBE CHANGW TO SHELL ARGUMNET
 if (type == "obs") {
   out_dir <- file.path(dir,"obs_out")
   out_name <- paste0(facet,"_",metric,"_obs.rds")
