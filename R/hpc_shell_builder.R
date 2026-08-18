@@ -25,60 +25,8 @@ div_shell_builder <- function(
   # check that all necassary function arguments are provided. MAYBE DONT KEEP 
   # THESE AS ..., MAYBE HAVE ALL VALABLE AND KEEP THEM AS NULL. WILL NEED TO EXPERIMENT
   
-  # Create function name
-  fun_name <- paste0(".",method,"_",metric)
-  
-  # Prepare function arguments
-  fun_args = list(...)  ## MAYBE MAKE COMM ITS OWN ARGUMENT AND HAVE FUNCTION TURN TO MATRIX
-  
-  # CHeck that all required arguments are given for specified function
-  arg_names <- names(fun_args)
-  fun_formals <- switch(
-    fun,
-    ".kernel_beta" = c(
-      formals(BAT::kernel.beta),
-      formals(BAT::hull.build),
-      ),
-    ".hull_beta" = c(
-      formals(BAT::hull.beta),
-      formals(BAT::hull.build)
-      ),
-    ".dendrogram_beta" = formals(BAT::beta),
-    ".tax_beta" = formals(BAT::beta),
-    ".kernel_alpha" = c(
-      formals(BAT::kernel.alpha),
-      formals(BAT::hull.build)
-      ),
-    ".hull_alpha" = c(
-      formals(BAT::hull.alpha),
-      formals(BAT::hull.build)
-      ),
-    ".dendrogram_alpha" = formals(BAT::alpha),
-    ".tax_alpha" = formals(BAT::alpha)
-   )
-  
-  required_args <- names(fun_formals[sapply(fun_formals, function(x) x == "")])
-  (!all(required_args %in% arg_names)) {
-    miss_arg <- required_args[!required_args %in% arg_names]
-    stop(paste0(
-      "Please provide values for: ",
-      do.call(paste, c(as.list(miss_arg), sep = ", "))
-    )
-  }
-  
-  if(names(fun_formals) %in% arg_names) {
-    formal_names <- names(fun_formals) 
-    miss_arg <- fun_formals[!formal_names %in% arg_names]
-    miss_names <- names(miss_arg)
-    warning(paste0(
-      "No values provided for: ",
-      do.call(paste, c(as.list(miss_names), sep = ", ")),
-      ". ",
-      do.call(paste, c(as.list(miss_arg), sep = ", ")),
-      " will be passed to function as defualt"
-      )
-      )
-  }
+  # Create function name and check arguments
+  fun <- .create_div_fun(method,metric,...)
   
   # Estimate resource needs
   hpc_args <- estimate_hpc_resources()
@@ -112,4 +60,69 @@ div_shell_builder <- function(
   # THAT WAY USERS WILL NO THEIR INPUTS ARE INCORRECT
   
   
+}
+fun_args
+# NEED TO MAKE FUNCTION NOT ALLOW EXTRA ARGUMENTS, AND TO NOT ALLOW FUNCTIONS
+# THAT DONT EXIST TO BE MADE
+.create_div_fun(method="dendrogram",metric="alpha",comm = comm,tree=tree)
+# Helper to create diveristy function name based on metric and method of choice.
+# Also checks to ensure all proper arguents are supplied to the function
+.create_div_fun <- function(method,metric,...){
+  
+  # Create function name
+  fun_name <- paste0(".",method,"_",metric)
+  
+  # Prepare function arguments
+  fun_args = list(...)  ## MAYBE MAKE COMM ITS OWN ARGUMENT AND HAVE FUNCTION TURN TO MATRIX
+  
+  # CHeck that all required arguments are given for specified function
+  arg_names <- names(fun_args)
+  fun_formals <- switch(
+    fun_name,
+    ".kernel_beta" = c(
+      formals(BAT::kernel.beta),
+      formals(BAT::hull.build),
+    ),
+    ".hull_beta" = c(
+      formals(BAT::hull.beta),
+      formals(BAT::hull.build)
+    ),
+    ".dendrogram_beta" = formals(BAT::beta),
+    ".tax_beta" = formals(BAT::beta),
+    ".kernel_alpha" = c(
+      formals(BAT::kernel.alpha),
+      formals(BAT::hull.build)
+    ),
+    ".hull_alpha" = c(
+      formals(BAT::hull.alpha),
+      formals(BAT::hull.build)
+    ),
+    ".dendrogram_alpha" = formals(BAT::alpha),
+    ".tax_alpha" = formals(BAT::alpha)
+  )
+  
+  required_args <- names(fun_formals[sapply(fun_formals, function(x) x == "")])
+  if(!all(required_args %in% arg_names)) {
+    miss_arg <- required_args[!required_args %in% arg_names]
+    stop(paste0(
+      "Please provide values for: ",
+      do.call(paste, c(as.list(miss_arg), sep = ", "))
+    )
+    )
+  }
+  
+  if(!all(names(fun_formals) %in% arg_names)) {
+    formal_names <- names(fun_formals) 
+    miss_arg <- fun_formals[!formal_names %in% arg_names]
+    miss_names <- names(miss_arg)
+    warning(paste0(
+      "No values provided for: ",
+      do.call(paste, c(as.list(miss_names), sep = ", ")),
+      ". ",
+      do.call(paste, c(as.list(miss_arg), sep = ", ")),
+      " will be passed to function as defualt"
+    )
+    )
+  }
+  fun_name
 }
