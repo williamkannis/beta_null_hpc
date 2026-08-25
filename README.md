@@ -779,3 +779,9 @@ should use the existing code as a guide.
 Adding multiple time steps with change between each will require heavy modification
 of the ```11_tax_beta_null_model_prep.R``` and ```12_beta_null_model_prep.R``` 
 scripts to include functions to estimate multiple change comparisons.
+
+
+## License
+
+The code in this repository is licensed under the
+[MIT License](LICENSE).
