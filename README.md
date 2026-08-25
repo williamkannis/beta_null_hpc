@@ -1,4 +1,4 @@
-# Beta diversity change null modeling workflow for Slurm-based high performance computer (HPC) clusters
+# Beta diversity change null modeling workflow for Slurm-based high performance computer (HPC) clusters [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22100238.svg)](https://doi.org/10.5281/zenodo.22100238)
 
 This repository contains a R workflow for calculating observed and 
 null model standardized alpha diversity, beta diversity, and local contribution 
@@ -20,7 +20,7 @@ If you use or adapt this workflow, please cite:
 >Annis, W.K., Thompson, L.M., Bower, L.M., Midway, S.M., Olden, J.D., Peoples, 
 B.K. (2026). Beta diversity change null modelling workflow for Slurm-based high 
 performance computer (HPC) clusters (Version v1.0.0) [Computer software]. 
-Zenodo. [DOI]
+Zenodo. [https://doi.org/10.5281/zenodo.22101306](https://doi.org/10.5281/zenodo.22101306)
 
 and the studies in which this work flow was developed for:
 
