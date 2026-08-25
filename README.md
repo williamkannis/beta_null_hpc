@@ -1,7 +1,5 @@
 # Beta diversity change null modelling workflow for Slurm-based high performance computer (HPC) clusters
 
-# Anonymous peer review version
-
 This repository contains a R workflow for calculating observed and 
 null model standardized alpha diversity, beta diversity, and local contribution 
 to beta diversity (LCBD) changes. Workflow estimates values in the taxonomic, 
@@ -12,27 +10,25 @@ expensive calculations ran using high performance computing (HPC) with multiple
 Linux systems in a cluster environment. HPC tasks ran on R scripts via 
 shell scripts and Slurm Workload Manager interface.
 
+This workflow was developed for two separate analyses, see citations below for
+more information.
 
-The workflow was developed for the two following analyses:
-
-[Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
-
-[Syndromes of multidimensional beta diversity change in invaded metacommunities](BLANK)
-
-Refer to these studies for detailed methodology and justification.
 
 # Citation and contact information
 If you use or adapt this workflow, please cite:
 
->BLANK. Null models reveal differing drivers of multidimensional beta diversity 
->change in invaded metacommunities. in review
+>Annis, W.K., Thompson, L.M., Bower, L.M., Midway, S.M., Olden, J.D., Peoples, 
+B.K. (2026). Beta diversity change null modelling workflow for Slurm-based high 
+performance computer (HPC) clusters (Version v1.0.0) [Computer software]. 
+Zenodo. [DOI]
 
->BLANK. Syndromes of multidimensional beta diversity change in invaded metacommunities.
->in review
+and the studies in which this work flow was developed for:
 
->BLANK. Beta diversity change null modelling workflow for Slurm-based high 
->performance computer (HPC) clusters. [Workflow citation / DOI]
+>Annis, W.K., Thompson, L.M., Bower, L.M., Midway, S.M., Peoples, B.K. (2026). Null 
+models reveal differing drivers of multidimensional beta diversity change in 
+invaded metacommunities. *Diversity and Distributions*. Accepted for publication.
 
+Refer to these studies for detailed methodology and justification.
 
 For questions about this analysis, please contact:
 
@@ -49,15 +45,15 @@ The goal of this repository is 1) provide code used in the analyses from the
 associated manuscripts, and 2) serve as general workflow to guide future null
 model analyses
 
-We are not able to directly share the community data form the manuscripts required
-to replicate the manuscript's beta diversity metrics. As such, this repository 
+We are not able to directly share the community data required
+to replicate the associated manuscripts' beta diversity metrics. As such, this repository 
 serves as a guideline for performing beta diversity change null model analyses 
 on HPC clusters. To reproduce the results of the associated
 manuscripts using provided intermediate data, see the following repositories:
 
-[Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](BLANK)
+[Null models reveal differing drivers of multidimensional beta diversity change in invaded metacommunities](https://github.com/williamkannis/Beta_diversity_change_drivers.git)
 
-[Syndromes of multidimensional beta diversity change in invaded metacommunities](BLANK)
+[Invasion syndromes: a framework for characterizing multidimensional beta diversity change in invaded metacommunities](https://github.com/williamkannis/invasion_syndromes.git)
 
 
 ## Workflow overview
