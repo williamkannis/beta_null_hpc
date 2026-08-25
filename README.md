@@ -30,7 +30,7 @@ invaded metacommunities. *Diversity and Distributions*. Accepted for publication
 
 Refer to these studies for detailed methodology and justification.
 
-For questions about this analysis, please contact:
+For questions about this workflow, please contact:
 
 ```bash
 Name: William K. Annis
