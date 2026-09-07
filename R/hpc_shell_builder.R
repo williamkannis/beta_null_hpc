@@ -1,6 +1,9 @@
+
+
+
+
 args <-c(
-  shell_dir,
-  overwrite = F,
+  host,  # login id for cluster, will prompt for password, recommend the creation of key
   estimate_hpc_args = T,
   hpc_args = NULL,
   label = NULL,
@@ -31,8 +34,6 @@ div_shell_builder <- function(
   # Estimate resource needs
   hpc_args <- estimate_hpc_resources()
   
-  # create necessary shell scripts
-  .shell_construct()
   # add corresponding r scripts
   file.copy()
   
@@ -53,8 +54,56 @@ div_shell_builder <- function(
     beta_comps = beta_comps,
     algorithm = algorithm
   )
-  saveRDS(input,file.path(dir,"hpc_input.rds"))
   
+  # Temporarily save input file, for hpc upload
+  tmp <- tempfile(fileext = ".rds")
+  on.exit(unlink(tmp), add = TRUE)
+  saveRDS(input, tmp)
+  
+  # Get HPC configuration
+  config <- get_beta_hpc_config()
+  
+  if (is.null(config$host)) {
+    stop("HPC configuration not found. Run beta_hpc_config() first.")
+  }
+  
+  # Log into hpc
+  session <- ssh::ssh_connect(config$host)
+  
+  # Load module version numbers
+  
+  # Upload data
+  ssh::scp_upload(
+    session = session,
+    files = "hpc",
+    to = config$hpc_dir
+  )
+  
+  # Submit observed job
+  observed_job <- ssh_command(
+    paste(...)
+  )
+  
+  # Submit null job
+  null_job <- ssh_command(
+    paste(...)
+  )
+  
+  # Submit SES job with dependency
+  ses_job <- ssh_command(
+    paste0(
+      "sbatch --dependency=afterok:",
+      observed_job, ":", null_job,
+      " ..."
+    )
+  )
+  
+  # Return job information to user
+  invisible(list(
+    observed = observed_job,
+    null = null_job,
+    ses = ses_job
+  ))
   
   ###NEED TO HAVE ALL THE WARNINGS OF THE HPC SCRIPTS IN THIS FUNCTION AS WELL
   # THAT WAY USERS WILL NO THEIR INPUTS ARE INCORRECT
