@@ -26,7 +26,8 @@ and the studies in which this work flow was developed for:
 
 >Annis, W.K., Thompson, L.M., Bower, L.M., Midway, S.M., Peoples, B.K. (2026). Null 
 models reveal differing drivers of multidimensional beta diversity change in 
-invaded metacommunities. *Diversity and Distributions*. Accepted for publication.
+invaded metacommunities. *Diversity and Distributions*, 32(9): e70270. 
+https://doi.org/10.1111/ddi.70270. 
 
 Refer to these studies for detailed methodology and justification.
 
